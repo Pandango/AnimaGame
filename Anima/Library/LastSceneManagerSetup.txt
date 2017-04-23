@@ -1,4 +1,4 @@
 sceneSetups:
-- path: D:/GitProject/UnityGameOnline/gameOnline/GameClient/Assets/Scenes/LoginScene.unity
+- path: Assets/Scenes/MainMenu.unity
   isLoaded: 1
   isActive: 1
