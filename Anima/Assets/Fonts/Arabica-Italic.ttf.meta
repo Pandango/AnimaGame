@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 8fb229c38500e5c42906f44a79ee4691
+timeCreated: 1492939779
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Arabica
+  fontNames:
+  - Arabica
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 713b27362c035394ea54097446e2e281, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
