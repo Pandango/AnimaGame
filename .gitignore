@@ -30,5 +30,6 @@ sysinfo.txt
 *.unitypackage
 
 Server/node_modules/
-/exe/
+Anima/exe/
+Anima/Library/
 /Temp/
