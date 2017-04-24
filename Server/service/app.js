@@ -47,16 +47,12 @@ io.on('connection', function (socket){
     });
 
     //game play socket
-    // socket.on("start_game", function(playerRegisterData){
-    //     var regis_player = {
-    //         'username' : playerRegisterData.username,
-    //         'role' : playerRegisterData.role,
-    //         'score' : 0
-    //     }
-
-    //     ingame_client.push[regis_player];
-    //     io.sockets.emit("start_game", {ingame_client});
-    // });
+    socket.on("create_game", function(){
+        var game_resource = {
+            'population' : "20"
+        }
+        io.sockets.emit("create_game",{game_resource});
+    });
 
     socket.on("disconnect", function (){
         socket.broadcast.emit("user_disconnect", currentUser);      
