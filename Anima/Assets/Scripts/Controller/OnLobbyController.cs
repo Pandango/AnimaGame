@@ -20,6 +20,13 @@ public class OnLobbyController : MonoBehaviour {
 
         StartCoroutine("UpdateLobby");
         lobbySocketHandler.GetClientCollection(OnUpdateClientLoginInfo);
+
+        InitializeSocketHandler();
+    }
+
+    void InitializeSocketHandler()
+    {
+        lobbySocketHandler.GetCreateGame(OnLoadNewGame);
     }
 
     IEnumerator UpdateLobby()
@@ -35,10 +42,15 @@ public class OnLobbyController : MonoBehaviour {
         UpdateClientsInfoInInLobby();     
     }
 
-    //public void OnStartGame()
-    //{
-    //    SceneManager.LoadScene("PlaingGame", LoadSceneMode.Single);
-    //}
+    public void OnStartGame()
+    {
+        lobbySocketHandler.SendCreateGame();  
+    }
+
+    void OnLoadNewGame()
+    {
+        SceneManager.LoadScene("PlayingGame", LoadSceneMode.Single);
+    }
 
     public void OnReady()
     {

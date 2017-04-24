@@ -10,6 +10,9 @@ public class LobbySocketHandler : MonoBehaviour {
     public delegate void OnUpdateClientLoginInfo();
     public OnUpdateClientLoginInfo callbackOnUpdateClientLoginInfo;
 
+    public delegate void OnLoadNewGameScene();
+    public OnLoadNewGameScene callbackOnLoadNewGameScene;
+
     public void SendUpdatePlayerState(string playerName, string state)
     {
         OnUpdatePlayerLobbyInfoToModel(state);
@@ -48,5 +51,21 @@ public class LobbySocketHandler : MonoBehaviour {
         PlayerDataModel.PlayerProfile.state = state;
     }
 
+    public void SendCreateGame()
+    {
+        socket.Emit("create_game");
+    }
 
+    public void GetCreateGame(OnLoadNewGameScene onLoadNewGameScene)
+    {
+        socket.On("create_game", OnCreateGame);
+        callbackOnLoadNewGameScene = onLoadNewGameScene;
+    }
+
+    void OnCreateGame(SocketIOEvent evt)
+    {
+        //update to resouce model
+
+        callbackOnLoadNewGameScene();
+    }
 }
