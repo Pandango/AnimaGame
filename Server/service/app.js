@@ -49,9 +49,26 @@ io.on('connection', function (socket){
     //game play socket
     socket.on("create_game", function(){
         var game_resource = {
-            'population' : "20"
+            'populationfoodBalanced' : {
+                'population' : 20,
+                'food' : 80
+            },
+            'sharingResource' : {
+                'wood' : 1000,
+                'stone': 1000
+            },
+            'buildingResource' : {
+                'woodCutterExp': 0,
+                'mineExp' : 0,
+                'farmExp' : 0,
+                'TownExp' : 0
+            },
+            'naturalResource' :{
+                'waterLv' : 0,
+                'forestExp' : 0
+            }
         }
-        io.sockets.emit("create_game",{game_resource});
+        io.sockets.emit("create_game",game_resource);
     });
 
     socket.on("disconnect", function (){
