@@ -6,11 +6,11 @@ using UnityEngine;
 public class GameResourceDataModel : MonoBehaviour {
     public static PopulationFoodBalanced PopulationFood { get; set; }
 
-    public static SharingResource SharingResources;
+    public static SharingResource SharingResources { get; set; }
 
-    public static BuildingResource BuildingResouces;
+    public static BuildingResource BuildingResouces { get; set; }
 
-    public static NaturalResource NaturalResources;
+    public static NaturalResource NaturalResources { get; set; }
 }
 
 [Serializable]

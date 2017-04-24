@@ -64,7 +64,17 @@ public class LobbySocketHandler : MonoBehaviour {
 
     void OnCreateGame(SocketIOEvent evt)
     {
-        //update to resouce model
+        JSONObject pfJson = evt.data.GetField("populationfoodBalanced");
+        GameResourceDataModel.PopulationFood = JsonUtility.FromJson<PopulationFoodBalanced>(pfJson.ToString());
+
+        JSONObject resourceJson = evt.data.GetField("sharingResource");
+        GameResourceDataModel.SharingResources = JsonUtility.FromJson<SharingResource>(resourceJson.ToString());
+
+        JSONObject buildingResourceJson = evt.data.GetField("buildingResource");
+        GameResourceDataModel.BuildingResouces = JsonUtility.FromJson<BuildingResource>(buildingResourceJson.ToString());
+
+        JSONObject naturalResourceJson = evt.data.GetField("naturalResource");
+        GameResourceDataModel.NaturalResources = JsonUtility.FromJson<NaturalResource>(naturalResourceJson.ToString());
 
         callbackOnLoadNewGameScene();
     }
