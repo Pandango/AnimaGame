@@ -32,7 +32,7 @@ public class LoginSocketHandler : MonoBehaviour {
         string getUserProfileFromServer = evt.data.ToString();
 
     
-        PlayerDataModel.PlayerProfile = JsonUtility.FromJson<PlayerInfo>(getUserProfileFromServer);
+        LoginDataModel.PlayerProfile = JsonUtility.FromJson<PlayerInfo>(getUserProfileFromServer);
 
         ShowHideRegisterPanel(false);
         ShowHideLobbyPanel(true);

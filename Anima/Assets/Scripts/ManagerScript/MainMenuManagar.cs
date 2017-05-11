@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MainMenuManagar : MonoBehaviour {
-    public static int MinimumClient = 2;
+    public static int MinimumClient = 1;
 
     public GameObject LobbyManagerObj;
     public GameObject LoginManagerObj;

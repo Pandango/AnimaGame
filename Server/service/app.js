@@ -1,4 +1,5 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var path = require('path');
 var app = express();
 
@@ -9,13 +10,29 @@ var io = require('socket.io')(server);
 var sockets;
 
 app.set('port', process.env.PORT || 8080);
+app.get('/', function(req, res){
+    res.sendfile(__dirname + '/index.html');
+});
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+var calculateGame = require('./CalculateGame');
+
+app.post('/calculate', function(req, res){
+    var cardUsagedResData = req.body;
+    var new_game_resource = calculateGame.getUsagedGameResource(cardUsagedResData, game_resource);
+    res.send(new_game_resource);
+})
 
 var clients = [];
-var ingame_client = [];
-
+var ingame_clients = [];
+var currentUser;
+var current_ingame_user;
+var game_resource;
+        
 io.on('connection', function (socket){
-    var currentUser;
-
+    
     socket.on("login", function(data){
         if(clients.length < 4){
             currentUser = {
@@ -48,8 +65,8 @@ io.on('connection', function (socket){
 
     //game play socket
     socket.on("create_game", function(){
-        var game_resource = {
-            'populationfoodBalanced' : {
+        game_resource = {
+            'populationFoodBalanced' : {
                 'population' : 20,
                 'food' : 80
             },
@@ -61,18 +78,59 @@ io.on('connection', function (socket){
                 'woodCutterExp': 0,
                 'mineExp' : 0,
                 'farmExp' : 0,
-                'TownExp' : 0
+                'townExp' : 0
             },
             'naturalResource' :{
-                'waterLv' : 0,
+                'waterExp' : 0,
                 'forestExp' : 0
             }
         }
-        io.sockets.emit("create_game",game_resource);
+        io.sockets.emit("create_game", game_resource);
     });
 
+    socket.on("update_game_resource", function(currentResource){
+        game_resource = currentResource;
+        io.sockets.emit("update_game_resource", game_resource);
+    });
+
+    socket.on("current_ingame_clients",function(){
+        socket.emit("current_ingame_clients", {ingame_clients});
+    })
+
+    socket.on("join_game", function(playerdata){
+         current_ingame_user = {
+                'username' : playerdata.username,
+                'role': playerdata.role,
+                'score': 0
+            }
+        
+        ingame_clients.push(current_ingame_user);
+        io.sockets.emit("current_ingame_clients", {ingame_clients});
+
+        console.log("user " + current_ingame_user.username + " join game already");   
+    });
+
+    socket.on("sort_player_turn", function(){
+        var sortItems = ingame_clients // sort by score
+        sortItems.sort(function(a, b){
+            return b.score - a.score;
+        })
+        
+        //Update role
+        for (var index = 0; index < sortItems.length; index++) {
+            sortItems[index].role = index;
+        }
+        ingame_clients = sortItems;
+        io.sockets.emit("sorted_players", {ingame_clients});
+    })
+
     socket.on("disconnect", function (){
-        socket.broadcast.emit("user_disconnect", currentUser);      
+        socket.broadcast.emit("user_disconnect", currentUser);   
+
+        if(ingame_clients.length >= 0){ //after run game will have ingame_client clear when disconnect
+            clients = ingame_clients;
+        }
+
         for(var userCouter = 0; userCouter < clients.length; userCouter++){
             if(clients[userCouter].username === currentUser.username){
                 console.log("User " + clients[userCouter].username + " disconnected");

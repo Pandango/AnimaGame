@@ -54,8 +54,8 @@ public class OnLobbyController : MonoBehaviour {
 
     public void OnReady()
     {
-        string currentState = PlayerDataModel.PlayerProfile.state;
-        string playerName = PlayerDataModel.PlayerProfile.username;
+        string currentState = LoginDataModel.PlayerProfile.state;
+        string playerName = LoginDataModel.PlayerProfile.username;
         string state;
 
         if (currentState == UserState.Waiting)
@@ -75,7 +75,7 @@ public class OnLobbyController : MonoBehaviour {
     {
         SetDefaultClientsDisplayName();
         //update name
-        PlayerInfo[] clientInfo = PlayerDataModel.ClientsInfo;
+        PlayerInfo[] clientInfo = LoginDataModel.ClientsInfo;
         for (int clientsNo = 0; clientsNo < clientInfo.Length; clientsNo++)
         {
             ClientsNameTxt[clientsNo].text= clientInfo[clientsNo].username;
@@ -90,7 +90,7 @@ public class OnLobbyController : MonoBehaviour {
 
     void CheckPlayerIsLobbyHeader()
     {     
-        bool isLobbyHeader = (PlayerDataModel.PlayerRole == 0);
+        bool isLobbyHeader = (LoginDataModel.PlayerRole == 0);
         if (isLobbyHeader)
         {
             StartGameBtn.gameObject.SetActive(true);
@@ -104,7 +104,7 @@ public class OnLobbyController : MonoBehaviour {
 
     void UpdateStartGameButton()
     {
-        if (PlayerDataModel.IsAllClientsReady && PlayerDataModel.IsClientEnough)
+        if (LoginDataModel.IsAllClientsReady && LoginDataModel.IsClientEnough)
         {
             StartGameBtn.interactable = true;
         }

@@ -18,7 +18,7 @@ public class LobbySocketHandler : MonoBehaviour {
         OnUpdatePlayerLobbyInfoToModel(state);
 
         Dictionary<string, string> sendingData = new Dictionary<string, string>();
-        sendingData["role"] = PlayerDataModel.ClientRole(playerName).ToString();
+        sendingData["role"] = LoginDataModel.ClientRole(playerName).ToString();
         sendingData["state"] = state;
 
         socket.Emit("update_userstate", new JSONObject(sendingData));
@@ -41,14 +41,14 @@ public class LobbySocketHandler : MonoBehaviour {
         string serviceData = JsonHelper.FormatJsonArrayItems(clientField);
 
         PlayerInfo[] clientsInfo = JsonHelper.FromJson<PlayerInfo>(serviceData);
-        PlayerDataModel.ClientsInfo = clientsInfo;
+        LoginDataModel.ClientsInfo = clientsInfo;
 
         callbackOnUpdateClientLoginInfo();
     }
 
     void OnUpdatePlayerLobbyInfoToModel(string state)
     {
-        PlayerDataModel.PlayerProfile.state = state;
+        LoginDataModel.PlayerProfile.state = state;
     }
 
     public void SendCreateGame()
@@ -64,7 +64,7 @@ public class LobbySocketHandler : MonoBehaviour {
 
     void OnCreateGame(SocketIOEvent evt)
     {
-        JSONObject pfJson = evt.data.GetField("populationfoodBalanced");
+        JSONObject pfJson = evt.data.GetField("populationFoodBalanced");
         GameResourceDataModel.PopulationFood = JsonUtility.FromJson<PopulationFoodBalanced>(pfJson.ToString());
 
         JSONObject resourceJson = evt.data.GetField("sharingResource");

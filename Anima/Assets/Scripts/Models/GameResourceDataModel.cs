@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class GameResourceDataModel : MonoBehaviour {
+[Serializable]
+public class GameResourceDataModel {
+
     public static PopulationFoodBalanced PopulationFood { get; set; }
 
     public static SharingResource SharingResources { get; set; }
@@ -30,15 +31,15 @@ public class SharingResource
 [Serializable]
 public class BuildingResource
 {
-    public int WoodCutterExp;
-    public int MineExp;
-    public int FarmExp;
-    public int TownExp;
+    public int woodCutterExp;
+    public int mineExp;
+    public int farmExp;
+    public int townExp;
 }
 
 [Serializable]
 public class NaturalResource
 {
-    public int wateLv;
+    public int waterExp;
     public int forestExp;
 }
