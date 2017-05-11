@@ -32,4 +32,5 @@ sysinfo.txt
 Server/node_modules/
 Anima/exe/
 Anima/Library/
-/Temp/
+Anima/Temp/
+Anima/packages/
