@@ -122,7 +122,19 @@ io.on('connection', function (socket){
         }
         ingame_clients = sortItems;
         io.sockets.emit("sorted_players", {ingame_clients});
+
+        gameTurnData = {
+            "turnNo" : 1,
+            "playerNameInCurrentTurn" : ingame_clients[0].username
+        }
+        io.sockets.emit("update_game_turn", {gameTurnData});
     })
+
+    socket.on("update_game_turn", function(newGameTurn){
+        newGameTurn.turnNo += 1;
+        gameTurnData = newGameTurn;
+        io.sockets.emit("update_game_turn", {gameTurnData});
+    });
 
     socket.on("disconnect", function (){
         socket.broadcast.emit("user_disconnect", currentUser);   

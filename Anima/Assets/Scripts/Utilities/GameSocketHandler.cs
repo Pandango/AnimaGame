@@ -15,6 +15,10 @@ public class GameSocketHandler : MonoBehaviour {
     public delegate void OnUpdateGameResource();
     private OnUpdateGameResource callbackUpdateGameResourcer;
 
+    public delegate void OnUpdateGameTurn();
+    private OnUpdateGameTurn callbackOnUpdateGameTurn;
+
+
     public void SendUpdateJoinGame(OnUpdatePlayerInfo callbackOnUpdatePlayerInfo)
     {
         //string playerName = "Panda mai dai norn";
@@ -72,6 +76,8 @@ public class GameSocketHandler : MonoBehaviour {
     public void GetSortedPlayerRole()
     {
         socket.On("sorted_players", UpdateClientsData);
+        
+        //check this turn is player's turn
     }
 
     void UpdateClientsData(SocketIOEvent evt)
@@ -84,6 +90,31 @@ public class GameSocketHandler : MonoBehaviour {
         print("CurrentPlayers Role:" + serviceData);
 
         //ending loading about new turn
+    }
+
+    public void SendReqGameTurnData(int turnNo, string nextPlayer)
+    {
+        Dictionary<string, string> sendingGameTurnData = new Dictionary<string, string>();
+        sendingGameTurnData["turnNo"] = turnNo.ToString();
+        sendingGameTurnData["playerNameInCurrentTurn"] = nextPlayer;
+
+        socket.Emit("update_game_turn", new JSONObject(sendingGameTurnData));
+    }
+
+    public void GetGameTurnData(OnUpdateGameTurn callbackOnUpdateGameTurnFunc)
+    {
+        socket.On("update_game_turn", UpdateGameTurnData);
+        callbackOnUpdateGameTurn = callbackOnUpdateGameTurnFunc;
+    }
+
+    void UpdateGameTurnData(SocketIOEvent evt)
+    {
+        Debug.Log("gameTurn" + evt.data.ToString());
+        string gameTurnField = evt.data.GetField("gameTurnData").ToString();
+        GameCurrentTurnData gameTurnData = JsonUtility.FromJson<GameCurrentTurnData>(gameTurnField);
+        PlayerDataModel.gameCurrentTurnData = gameTurnData;
+
+        callbackOnUpdateGameTurn();
     }
 
     public void SendReqUpdatedGameResource()

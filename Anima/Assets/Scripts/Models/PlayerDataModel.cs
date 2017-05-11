@@ -9,7 +9,7 @@ public class PlayerDataModel : MonoBehaviour {
 
     public static int CardsInHandUnit { get; set; }
 
-
+    public static GameCurrentTurnData gameCurrentTurnData { get; set; }
 
     public static int ClientUnit
     {
@@ -24,4 +24,11 @@ public class PlayerInGameData
     public string username;
     public int role;
     public int score;
+}
+
+[Serializable]
+public class GameCurrentTurnData
+{
+    public int turnNo;
+    public string playerNameInCurrentTurn;
 }
