@@ -13,6 +13,8 @@ public class OnLobbyController : MonoBehaviour {
     [Header("Button Setter")]
     public Button ReadyBtn;
     public Button StartGameBtn;
+    public Sprite ReadyBtnSprite;
+    public Sprite UnReadyBtnSprite;
 
     void Start()
     {
@@ -61,12 +63,12 @@ public class OnLobbyController : MonoBehaviour {
         if (currentState == UserState.Waiting)
         {           
             state = UserState.Ready;
-            ReadyBtn.gameObject.GetComponentInChildren<Text>().text = "Unready";
+            ReadyBtn.gameObject.GetComponentInChildren<Image>().sprite = UnReadyBtnSprite;
         }
         else
         {
             state = UserState.Waiting;
-            ReadyBtn.gameObject.GetComponentInChildren<Text>().text = "ready";
+            ReadyBtn.gameObject.GetComponentInChildren<Image>().sprite = ReadyBtnSprite;
         }
         lobbySocketHandler.SendUpdatePlayerState(playerName, state);
     }
@@ -120,7 +122,7 @@ public class OnLobbyController : MonoBehaviour {
         {
             ClientsStateTxt[index].text = string.Empty;
         }
-        ReadyBtn.gameObject.GetComponentInChildren<Text>().text = "ready";
+        ReadyBtn.gameObject.GetComponentInChildren<Image>().sprite = ReadyBtnSprite;
     }
 
     void SetDefaultClientsDisplayName()
