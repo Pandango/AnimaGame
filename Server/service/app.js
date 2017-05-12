@@ -17,13 +17,20 @@ app.get('/', function(req, res){
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-var calculateGame = require('./CalculateGame');
+var calculateCardUsed = require('./CalculateGame');
 
 app.post('/calculate', function(req, res){
     var cardUsagedResData = req.body;
-    var new_game_resource = calculateGame.getUsagedGameResource(cardUsagedResData, game_resource);
+    var new_game_resource = calculateCardUsed.getUsagedGameResource(cardUsagedResData, game_resource);
     res.send(new_game_resource);
 })
+
+var calculateEndTurn = require('./CalculateEndTurn');
+app.post('/endturn', function(req, res){
+    var currentResource = req.body;
+    var calculatedResource = calculateEndTurn.calResourceAfterEndingTurn(currentResource)
+    res.send(calculatedResource);
+});
 
 var clients = [];
 var ingame_clients = [];
@@ -75,14 +82,14 @@ io.on('connection', function (socket){
                 'stone': 1000
             },
             'buildingResource' : {
-                'woodCutterExp': 0,
-                'mineExp' : 0,
-                'farmExp' : 0,
-                'townExp' : 0
+                'woodCutterExp': 3,
+                'mineExp' : 3,
+                'farmExp' : 3,
+                'townExp' : 3
             },
             'naturalResource' :{
                 'waterExp' : 0,
-                'forestExp' : 0
+                'forestExp' : 3
             }
         }
         io.sockets.emit("create_game", game_resource);
