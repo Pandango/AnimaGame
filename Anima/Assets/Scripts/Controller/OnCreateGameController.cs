@@ -10,12 +10,6 @@ public class OnCreateGameController : MonoBehaviour {
     public Text WoodUnitTxt;
     public Text StoneUnitTxt;
 
-    [Header("Building LV")]
-    public Text WoodCutterLvTxt;
-    public Text MineLvTxt;
-    public Text FarmLvTxt;
-    public Text TownLvTxt;
-
     [Header("BuildingGameObject")]
     public List<GameObject> buildingGameObj;
     public List<GameObject> naturalGameObj;
@@ -101,13 +95,6 @@ public class OnCreateGameController : MonoBehaviour {
         _mineController.UpgradeBuilding();
         _farmController.UpgradeBuilding();
         _townController.UpgradeBuilding();
-
-        WoodCutterLvTxt.text = Utilities.FormatDisplayLv(woodCutterLv);
-        MineLvTxt.text = Utilities.FormatDisplayLv(mineLv);
-        FarmLvTxt.text = Utilities.FormatDisplayLv(farmLv);
-        TownLvTxt.text = Utilities.FormatDisplayLv(farmLv);
-
-
     }
 
     void UpdateNaturalResource()
@@ -116,12 +103,6 @@ public class OnCreateGameController : MonoBehaviour {
         int waterExp = GameResourceDataModel.NaturalResources.waterExp;
 
         _forestController.UpgradeBuilding();
-
-        //int forestLv = GameFormular.CalculateEXPToLv(forestEXP);
-
-        //int waterLv = GameResourceDataModel.NaturalResources.waterExp;
-
-        
     }
 
 }
