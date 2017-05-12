@@ -63,7 +63,7 @@ public class OnBuildingUpgradeController : MonoBehaviour {
     {
         buildingLvTxt.text = Utilities.FormatDisplayLv(selectedLv);
         SpriteRenderer spriteObj = BuildingSpiteObj.GetComponent<SpriteRenderer>();
-        spriteObj.sprite = BuildingLvSprite[selectedLv];
+        spriteObj.sprite = BuildingLvSprite[selectedLv - 1];
 
         //update card model
     }
