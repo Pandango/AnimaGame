@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class OnPlayerController : MonoBehaviour {
     public GameSocketHandler gameSocketHandler;
     public CardCollectionManager cardCollectionManager;
+    public GameCalculatorService calculatorService;
 
     private bool IsSocketConnected = false;
     public CardDataModel cardModel;
@@ -107,6 +108,12 @@ public class OnPlayerController : MonoBehaviour {
         }      
     }
 
+    public void UpdateEndTurnGameResource()
+    {
+        string jsonObj = JsonUtility.ToJson(Utilities.GenerateSendingGameResourceDataObj(), true);
+        calculatorService.SendReqCalEndTurnResource(jsonObj);
+    }
+
     void SetPlayerTurn(bool isTurned , string currentPlayerNameTurn)
     {
         if (isTurned)
@@ -138,7 +145,7 @@ public class OnPlayerController : MonoBehaviour {
                 gameSocketHandler.SendUpdateJoinGame(UpdatePlayerInfoUI);
 
                 gameSocketHandler.GetSortedPlayerRole();
-                gameSocketHandler.GetGameTurnData(UpdateGameTurn);
+                gameSocketHandler.GetGameTurnData(UpdateGameTurn, UpdateEndTurnGameResource);
             }
         }
     }

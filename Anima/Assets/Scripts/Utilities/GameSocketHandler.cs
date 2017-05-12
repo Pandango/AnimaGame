@@ -18,6 +18,8 @@ public class GameSocketHandler : MonoBehaviour {
     public delegate void OnUpdateGameTurn();
     private OnUpdateGameTurn callbackOnUpdateGameTurn;
 
+    public delegate void OnUpdateEndGameTurnResource();
+    private OnUpdateEndGameTurnResource callbackOnUpdateEndGameTurnResource;
 
     public void SendUpdateJoinGame(OnUpdatePlayerInfo callbackOnUpdatePlayerInfo)
     {
@@ -101,9 +103,11 @@ public class GameSocketHandler : MonoBehaviour {
         socket.Emit("update_game_turn", new JSONObject(sendingGameTurnData));
     }
 
-    public void GetGameTurnData(OnUpdateGameTurn callbackOnUpdateGameTurnFunc)
+    public void GetGameTurnData(OnUpdateGameTurn callbackOnUpdateGameTurnFunc, OnUpdateEndGameTurnResource callbackOnUpdateEndGameTurnResourceFunc)
     {
         socket.On("update_game_turn", UpdateGameTurnData);
+        //update new resource afgter end turn
+        callbackOnUpdateEndGameTurnResource = callbackOnUpdateEndGameTurnResourceFunc;
         callbackOnUpdateGameTurn = callbackOnUpdateGameTurnFunc;
     }
 
@@ -114,12 +118,13 @@ public class GameSocketHandler : MonoBehaviour {
         GameCurrentTurnData gameTurnData = JsonUtility.FromJson<GameCurrentTurnData>(gameTurnField);
         PlayerDataModel.gameCurrentTurnData = gameTurnData;
 
+        callbackOnUpdateEndGameTurnResource();
         callbackOnUpdateGameTurn();
     }
 
     public void SendReqUpdatedGameResource()
     {
-        string sendingGameResource = JsonUtility.ToJson(GenerateSendingGameResourceDataObj());
+        string sendingGameResource = JsonUtility.ToJson(Utilities.GenerateSendingGameResourceDataObj());
         socket.Emit("update_game_resource", new JSONObject (sendingGameResource));
     }
 
@@ -128,7 +133,7 @@ public class GameSocketHandler : MonoBehaviour {
         socket.On("update_game_resource", UpdateGameResource);
         callbackUpdateGameResourcer = callbackUpdateGameResourcerFunc;
     }
-    
+
     void UpdateGameResource(SocketIOEvent evt)
     {
         Debug.Log(evt.data.ToString());
@@ -148,22 +153,22 @@ public class GameSocketHandler : MonoBehaviour {
         callbackUpdateGameResourcer();
     }
 
-    SendingGameResource GenerateSendingGameResourceDataObj()
-    {
-        SendingGameResource sendingGameRes = new SendingGameResource();
-        sendingGameRes.populationFoodBalanced = GameResourceDataModel.PopulationFood;
-        sendingGameRes.sharingResource = GameResourceDataModel.SharingResources;
-        sendingGameRes.buildingResource = GameResourceDataModel.BuildingResouces;
-        sendingGameRes.naturalResource = GameResourceDataModel.NaturalResources;
-        return sendingGameRes;
-    }
+    //SendingGameResource GenerateSendingGameResourceDataObj()
+    //{
+    //    SendingGameResource sendingGameRes = new SendingGameResource();
+    //    sendingGameRes.populationFoodBalanced = GameResourceDataModel.PopulationFood;
+    //    sendingGameRes.sharingResource = GameResourceDataModel.SharingResources;
+    //    sendingGameRes.buildingResource = GameResourceDataModel.BuildingResouces;
+    //    sendingGameRes.naturalResource = GameResourceDataModel.NaturalResources;
+    //    return sendingGameRes;
+    //}
 }
 
-[Serializable]
-public class SendingGameResource
-{
-    public PopulationFoodBalanced populationFoodBalanced = new PopulationFoodBalanced();
-    public SharingResource sharingResource = new SharingResource();
-    public BuildingResource buildingResource = new BuildingResource();
-    public NaturalResource naturalResource = new NaturalResource();
-} 
+//[Serializable]
+//public class SendingGameResource
+//{
+//    public PopulationFoodBalanced populationFoodBalanced = new PopulationFoodBalanced();
+//    public SharingResource sharingResource = new SharingResource();
+//    public BuildingResource buildingResource = new BuildingResource();
+//    public NaturalResource naturalResource = new NaturalResource();
+//} 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,7 +27,7 @@ public class Utilities : MonoBehaviour {
 
     public static int RandomCard()
     {
-        int random = Random.Range(0, CardDataModel.CardObjectMaxUnit);
+        int random = UnityEngine.Random.Range(0, CardDataModel.CardObjectMaxUnit);
         return random;
     }
 
@@ -42,7 +43,25 @@ public class Utilities : MonoBehaviour {
         else
         {
             return formatSecond;
-        }
-        
+        }    
     }
+
+    public static SendingGameResource GenerateSendingGameResourceDataObj()
+    {
+        SendingGameResource sendingGameRes = new SendingGameResource();
+        sendingGameRes.populationFoodBalanced = GameResourceDataModel.PopulationFood;
+        sendingGameRes.sharingResource = GameResourceDataModel.SharingResources;
+        sendingGameRes.buildingResource = GameResourceDataModel.BuildingResouces;
+        sendingGameRes.naturalResource = GameResourceDataModel.NaturalResources;
+        return sendingGameRes;
+    }
+}
+
+[Serializable]
+public class SendingGameResource
+{
+    public PopulationFoodBalanced populationFoodBalanced = new PopulationFoodBalanced();
+    public SharingResource sharingResource = new SharingResource();
+    public BuildingResource buildingResource = new BuildingResource();
+    public NaturalResource naturalResource = new NaturalResource();
 }
