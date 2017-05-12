@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -43,5 +44,12 @@ public class GameFormular : MonoBehaviour {
     public static int TownCardStoneUsage(int level)
     {
         return 100 + (100 * level);
+    }
+
+    public static int CalPopFoodBalanced(int populationUnit, int foodUnit)
+    {
+        int balancedPercent = (foodUnit / (populationUnit * 3)) * 100;
+        return balancedPercent;
+
     }
 }

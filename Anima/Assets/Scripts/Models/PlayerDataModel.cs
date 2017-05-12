@@ -16,6 +16,7 @@ public class PlayerDataModel : MonoBehaviour {
         get { return ClientsInGameData.Length; }
     }
 
+    public static bool IsFirstTurn = true;
 }
 
 [Serializable]

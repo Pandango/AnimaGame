@@ -36,7 +36,7 @@ function calculatePopulation(townLv, populationUnit){
 };
 
 function calculateFood(farmLv, FoodUnit){
-    var currentFood = FoodUnit + (FoodUnit * 1.5 * farmLv);
+    var currentFood = Math.floor(FoodUnit + (FoodUnit * 1.5 * farmLv));
     return currentFood;
 };
 

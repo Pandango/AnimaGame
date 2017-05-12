@@ -21,6 +21,9 @@ public class GameSocketHandler : MonoBehaviour {
     public delegate void OnUpdateEndGameTurnResource();
     private OnUpdateEndGameTurnResource callbackOnUpdateEndGameTurnResource;
 
+    public delegate void OnGameOver();
+    private OnGameOver callbackOnGameOver;
+
     public void SendUpdateJoinGame(OnUpdatePlayerInfo callbackOnUpdatePlayerInfo)
     {
         //string playerName = "Panda mai dai norn";
@@ -136,7 +139,7 @@ public class GameSocketHandler : MonoBehaviour {
 
     void UpdateGameResource(SocketIOEvent evt)
     {
-        Debug.Log(evt.data.ToString());
+        Debug.Log("Update Game Res" + evt.data.ToString());
 
         JSONObject pfJson = evt.data.GetField("populationFoodBalanced");
         GameResourceDataModel.PopulationFood = JsonUtility.FromJson<PopulationFoodBalanced>(pfJson.ToString());
@@ -151,6 +154,31 @@ public class GameSocketHandler : MonoBehaviour {
         GameResourceDataModel.NaturalResources = JsonUtility.FromJson<NaturalResource>(naturalResourceJson.ToString());
 
         callbackUpdateGameResourcer();
+    }
+
+    public void SendReqGameOver()
+    {
+        Dictionary<string, string> sendingNewPlayerData = new Dictionary<string, string>();
+        sendingNewPlayerData["isMissionComplete"] = GameOverModel.isMissionComplete.ToString();
+        sendingNewPlayerData["description"] = GameOverModel.description;
+
+        socket.Emit("game_over", new JSONObject(sendingNewPlayerData));
+    }
+
+    public void GetGameOver(OnGameOver callbackOnGameOverFunc)
+    {
+        socket.On("game_over", UpdateGameOver);
+        callbackOnGameOver = callbackOnGameOverFunc;
+    }
+
+    void UpdateGameOver(SocketIOEvent evt)
+    {
+        Debug.Log("test" + evt.data);
+
+        GameOverModel.isMissionComplete = evt.data.GetField("isMissionComplete");
+        GameOverModel.description = evt.data.GetField("description").ToString();
+        callbackOnGameOver();
+
     }
 
     //SendingGameResource GenerateSendingGameResourceDataObj()

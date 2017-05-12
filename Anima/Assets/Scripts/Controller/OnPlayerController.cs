@@ -110,8 +110,16 @@ public class OnPlayerController : MonoBehaviour {
 
     public void UpdateEndTurnGameResource()
     {
-        string jsonObj = JsonUtility.ToJson(Utilities.GenerateSendingGameResourceDataObj(), true);
-        calculatorService.SendReqCalEndTurnResource(jsonObj);
+        if (PlayerDataModel.IsFirstTurn)
+        { 
+            PlayerDataModel.IsFirstTurn = false;
+        }
+        else
+        {
+            string jsonObj = JsonUtility.ToJson(Utilities.GenerateSendingGameResourceDataObj(), true);
+            calculatorService.SendReqCalEndTurnResource(jsonObj);
+        }
+        
     }
 
     void SetPlayerTurn(bool isTurned , string currentPlayerNameTurn)

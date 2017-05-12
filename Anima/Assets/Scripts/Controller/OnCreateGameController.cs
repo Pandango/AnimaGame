@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class OnCreateGameController : MonoBehaviour {
@@ -41,6 +42,7 @@ public class OnCreateGameController : MonoBehaviour {
     void IntializeSocket()
     {
         gameSocketHandler.GetUpdatedGameResource(UpdateGameResource);
+        gameSocketHandler.GetGameOver(OnLoadGameOverScene);
     }
 
     void MockUpResource()
@@ -68,6 +70,9 @@ public class OnCreateGameController : MonoBehaviour {
         UpdateSharingResource();
         UpdateBuildingLv();
         UpdateNaturalResource();
+        UpdatePopFoodBar();
+
+        CheckGameOver();
     }
 
     void UpdateSharingResource()
@@ -105,4 +110,33 @@ public class OnCreateGameController : MonoBehaviour {
         _forestController.UpgradeBuilding();
     }
 
+    void UpdatePopFoodBar()
+    {
+        int poppulationUnit = GameResourceDataModel.PopulationFood.population;
+        int foodUnit = GameResourceDataModel.PopulationFood.food;
+
+        int balancedPercent = GameFormular.CalPopFoodBalanced(poppulationUnit, foodUnit);
+        Debug.Log("BalancedPercent : " + balancedPercent);
+
+    }
+
+    public void CheckGameOver()
+    {  
+        int currentPopulation = GameResourceDataModel.PopulationFood.population;
+        GameOverModel.isMissionComplete = false;
+        GameOverModel.description = SituationDescription.Drought;
+
+        if (currentPopulation <= 0)
+        {
+            GameOverModel.isMissionComplete = false;
+            GameOverModel.description = SituationDescription.Drought;
+
+            gameSocketHandler.SendReqGameOver();
+        }    
+    }
+
+    void OnLoadGameOverScene()
+    {
+        SceneManager.LoadScene("GameOver", LoadSceneMode.Single);
+    }
 }

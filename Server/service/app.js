@@ -37,7 +37,8 @@ var ingame_clients = [];
 var currentUser;
 var current_ingame_user;
 var game_resource;
-        
+var gameOverData;
+
 io.on('connection', function (socket){
     
     socket.on("login", function(data){
@@ -141,6 +142,11 @@ io.on('connection', function (socket){
         newGameTurn.turnNo += 1;
         gameTurnData = newGameTurn;
         io.sockets.emit("update_game_turn", {gameTurnData});
+    });
+
+    socket.on("game_over", function(reqGameOver){
+        gameOverData = reqGameOver;
+        io.sockets.emit("game_over", gameOverData);
     });
 
     socket.on("disconnect", function (){
