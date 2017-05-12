@@ -123,13 +123,11 @@ public class OnCreateGameController : MonoBehaviour {
     public void CheckGameOver()
     {  
         int currentPopulation = GameResourceDataModel.PopulationFood.population;
-        GameOverModel.isMissionComplete = false;
-        GameOverModel.description = SituationDescription.Drought;
 
         if (currentPopulation <= 0)
         {
             GameOverModel.isMissionComplete = false;
-            GameOverModel.description = SituationDescription.Drought;
+            GameOverModel.description = SituationDescription.Desolation;
 
             gameSocketHandler.SendReqGameOver();
         }    

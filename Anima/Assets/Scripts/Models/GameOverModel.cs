@@ -10,6 +10,6 @@ public class GameOverModel : MonoBehaviour {
 public static class SituationDescription
 {
     public const string
-        Drought = "DROUGHT",
+        Desolation = "DESOLATION",
         Flood = "FLOOD";
 }
