@@ -9,13 +9,26 @@ exports.calResourceAfterEndingTurn = function(currentResource){
     var updatedWood = calculateWood(woodCutterLv, currentResource.sharingResource.wood);
     var updatedStone = calculateStone(mineLv, currentResource.sharingResource.stone);
 
-    currentResource.populationFoodBalanced.population = updatedPopulation;
     currentResource.populationFoodBalanced.food = updatedFood;
+    currentResource.populationFoodBalanced.population = checkPopFoodBalanced(updatedPopulation, updatedFood);
     currentResource.sharingResource.wood = updatedWood;
     currentResource.sharingResource.stone = updatedStone;
     
     return currentResource;
 };
+
+function checkPopFoodBalanced (populationUnit, foodUnit){
+    var currentPopulationUnit = populationUnit;
+    var balancePercent = calPopFoodBalance(populationUnit, foodUnit);
+
+    if(balancePercent < 60 && balancePercent >= 40){
+        currentPopulationUnit = getResetPopulation(foodUnit);
+    }else if(balancePercent < 40){
+        currentPopulationUnit = 0
+    }
+    
+    return currentPopulationUnit;
+}
 
 function calculatePopulation(townLv, populationUnit){
     var currentPopulation = populationUnit + (populationUnit * townLv);
@@ -37,6 +50,17 @@ function calculateStone(mineLv, stoneUnit){
     return currentStoneUnit;
 };
 
+function calPopFoodBalance(populationUnit, foodUnit){
+    var balancePercent = Math.floor((foodUnit / (populationUnit * 3)) * 100);
+    return balancePercent;
+};
+
 function calBuildingLv(exp){
     return Math.floor(exp / 3);
 };
+
+function getResetPopulation(foodUnit){
+    var newPopulation = Math.floor(foodUnit / 3);
+    return newPopulation;
+};
+
