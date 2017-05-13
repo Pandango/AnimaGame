@@ -44,7 +44,6 @@ public class GameCalculatorService : MonoBehaviour {
         {
             Debug.Log("WWW Error:" + www.error.ToString());
         }
-
     }
 
     public void sendReqUsedCard(string JsonObject)
@@ -108,4 +107,55 @@ public class GameCalculatorService : MonoBehaviour {
         StartCoroutine(WaitForRequestEndTurn(www));
     }
 
+
+    IEnumerator WaitForRequestEndRound(WWW www)
+    {
+        yield return www;
+
+        if (www.error == null)
+        {
+            //update game resource to model
+            Debug.Log("WWW EndRound" + www.data);
+
+            JSONObject updatedGameResourceInRoundJson = new JSONObject(www.text);
+
+            JSONObject endRoundEvent = updatedGameResourceInRoundJson["gameEvent"];
+            PlayerDataModel.RoundEvent = endRoundEvent.str;
+
+            Debug.Log(endRoundEvent.str);
+
+            JSONObject pfJson = updatedGameResourceInRoundJson["populationFoodBalanced"];
+            GameResourceDataModel.PopulationFood = JsonUtility.FromJson<PopulationFoodBalanced>(pfJson.ToString());
+
+            JSONObject resourceJson = updatedGameResourceInRoundJson["sharingResource"];
+            GameResourceDataModel.SharingResources = JsonUtility.FromJson<SharingResource>(resourceJson.ToString());
+
+            JSONObject buildingResourceJson = updatedGameResourceInRoundJson["buildingResource"];
+            GameResourceDataModel.BuildingResouces = JsonUtility.FromJson<BuildingResource>(buildingResourceJson.ToString());
+
+            JSONObject naturalResourceJson = updatedGameResourceInRoundJson["naturalResource"];
+            GameResourceDataModel.NaturalResources = JsonUtility.FromJson<NaturalResource>(naturalResourceJson.ToString());
+
+            gameSocketHandler.SendReqRandomEventAfterEndRound();
+        }
+        else
+        {
+            Debug.Log("WWW Error:" + www.error.ToString());
+        }
+
+    }
+
+    public void SendReqEventRandomAfterEndRound(string JsonObject)
+    {
+        string url = hostUrl + "/endround";
+
+        Dictionary<string, string> headers = new Dictionary<string, string>();
+        headers.Add("Content-Type", "application/json");
+
+        byte[] body = Encoding.UTF8.GetBytes(JsonObject);
+
+        WWW www = new WWW(url, body, headers);
+
+        StartCoroutine(WaitForRequestEndRound(www));
+    }
 }

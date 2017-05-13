@@ -20,6 +20,7 @@ public class OnPlayerController : MonoBehaviour {
     public Text CurrentRoleTxt;
     public Text TimerMiliTxt;
     public Text TimerSecondsTxt;
+    public Text EventTxt;
 
     [Header("Player Action Panel")]
     public Button UsedCardBtn;
@@ -111,7 +112,7 @@ public class OnPlayerController : MonoBehaviour {
     public void UpdateEndTurnGameResource()
     {
         if (PlayerDataModel.IsFirstTurn)
-        { 
+        {
             PlayerDataModel.IsFirstTurn = false;
         }
         else
@@ -154,6 +155,7 @@ public class OnPlayerController : MonoBehaviour {
 
                 gameSocketHandler.GetSortedPlayerRole();
                 gameSocketHandler.GetGameTurnData(UpdateGameTurn, UpdateEndTurnGameResource);
+                gameSocketHandler.GetRandomEventAfterEndRound(DisplayEventAfterEventTurn);
             }
         }
     }
@@ -204,7 +206,16 @@ public class OnPlayerController : MonoBehaviour {
 
     void StartNewRound()
     {
+        string jsonObj = JsonUtility.ToJson(Utilities.GenerateSendingGameResourceDataObj(), true);
+        calculatorService.SendReqEventRandomAfterEndRound(jsonObj);
+
         gameSocketHandler.SendRequestSortedPlayerRole();
+
+    }
+
+    void DisplayEventAfterEventTurn()
+    {
+        EventTxt.text = PlayerDataModel.RoundEvent;
     }
     //IEnumerator StartCounter()
     //{

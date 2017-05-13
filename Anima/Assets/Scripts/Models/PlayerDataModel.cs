@@ -16,6 +16,8 @@ public class PlayerDataModel : MonoBehaviour {
         get { return ClientsInGameData.Length; }
     }
 
+    public static string RoundEvent { get; set; }
+
     public static bool IsFirstTurn = true;
 }
 

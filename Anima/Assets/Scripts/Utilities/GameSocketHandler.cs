@@ -24,6 +24,10 @@ public class GameSocketHandler : MonoBehaviour {
     public delegate void OnGameOver();
     private OnGameOver callbackOnGameOver;
 
+    public delegate void OnUpdateNewRound();
+    private OnUpdateNewRound callbackOnUpdateNewRound;
+
+
     public void SendUpdateJoinGame(OnUpdatePlayerInfo callbackOnUpdatePlayerInfo)
     {
         //string playerName = "Panda mai dai norn";
@@ -181,22 +185,61 @@ public class GameSocketHandler : MonoBehaviour {
 
     }
 
-    //SendingGameResource GenerateSendingGameResourceDataObj()
-    //{
-    //    SendingGameResource sendingGameRes = new SendingGameResource();
-    //    sendingGameRes.populationFoodBalanced = GameResourceDataModel.PopulationFood;
-    //    sendingGameRes.sharingResource = GameResourceDataModel.SharingResources;
-    //    sendingGameRes.buildingResource = GameResourceDataModel.BuildingResouces;
-    //    sendingGameRes.naturalResource = GameResourceDataModel.NaturalResources;
-    //    return sendingGameRes;
-    //}
+    public void SendReqRandomEventAfterEndRound()
+    {
+        string sendingGameResource = JsonUtility.ToJson(GenerateSendingGameResourceAfterEndRoundObj());
+        socket.Emit("update_newround_resource", new JSONObject (sendingGameResource));
+    }
+
+    public void GetRandomEventAfterEndRound(OnUpdateNewRound callbackOnUpdateNewRoundFunc)
+    {
+        socket.On("update_newround_resource", UpdateResourceAfterRoundEvent);
+        callbackOnUpdateNewRound = callbackOnUpdateNewRoundFunc;
+    }
+
+    void UpdateResourceAfterRoundEvent(SocketIOEvent evt)
+    {
+        string updatedResource = evt.data.ToString();
+
+
+        JSONObject endRoundEvent = evt.data.GetField("gameEvent");
+        PlayerDataModel.RoundEvent = endRoundEvent.str;
+
+        Debug.Log("handler" + endRoundEvent.str);
+
+        JSONObject pfJson = evt.data.GetField("populationFoodBalanced");
+        GameResourceDataModel.PopulationFood = JsonUtility.FromJson<PopulationFoodBalanced>(pfJson.ToString());
+
+        JSONObject resourceJson = evt.data.GetField("sharingResource");
+        GameResourceDataModel.SharingResources = JsonUtility.FromJson<SharingResource>(resourceJson.ToString());
+
+        JSONObject buildingResourceJson = evt.data.GetField("buildingResource");
+        GameResourceDataModel.BuildingResouces = JsonUtility.FromJson<BuildingResource>(buildingResourceJson.ToString());
+
+        JSONObject naturalResourceJson = evt.data.GetField("naturalResource");
+        GameResourceDataModel.NaturalResources = JsonUtility.FromJson<NaturalResource>(naturalResourceJson.ToString());
+
+        callbackOnUpdateNewRound();
+    }
+
+    SendingGameResourceAfterEndRound GenerateSendingGameResourceAfterEndRoundObj()
+    {
+        SendingGameResourceAfterEndRound sendingGameRes = new SendingGameResourceAfterEndRound();
+        sendingGameRes.gameEvent = PlayerDataModel.RoundEvent;
+        sendingGameRes.populationFoodBalanced = GameResourceDataModel.PopulationFood;
+        sendingGameRes.sharingResource = GameResourceDataModel.SharingResources;
+        sendingGameRes.buildingResource = GameResourceDataModel.BuildingResouces;
+        sendingGameRes.naturalResource = GameResourceDataModel.NaturalResources;
+        return sendingGameRes;
+    }
 }
 
-//[Serializable]
-//public class SendingGameResource
-//{
-//    public PopulationFoodBalanced populationFoodBalanced = new PopulationFoodBalanced();
-//    public SharingResource sharingResource = new SharingResource();
-//    public BuildingResource buildingResource = new BuildingResource();
-//    public NaturalResource naturalResource = new NaturalResource();
-//} 
+[Serializable]
+public class SendingGameResourceAfterEndRound
+{
+    public string gameEvent;
+    public PopulationFoodBalanced populationFoodBalanced = new PopulationFoodBalanced();
+    public SharingResource sharingResource = new SharingResource();
+    public BuildingResource buildingResource = new BuildingResource();
+    public NaturalResource naturalResource = new NaturalResource();
+}

@@ -95,7 +95,7 @@ io.on('connection', function (socket){
                 'woodCutterExp': 3,
                 'mineExp' : 3,
                 'farmExp' : 3,
-                'townExp' : 9
+                'townExp' : 3
             },
             'naturalResource' :{
                 'waterExp' : 0,
@@ -158,6 +158,11 @@ io.on('connection', function (socket){
     socket.on("game_over", function(reqGameOver){
         gameOverData = reqGameOver;
         io.sockets.emit("game_over", gameOverData);
+    });
+
+    socket.on("update_newround_resource", function(resource){
+        var newResource = resource;
+        io.sockets.emit("update_newround_resource", newResource);
     });
 
     socket.on("disconnect", function (){
