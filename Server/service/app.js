@@ -86,7 +86,7 @@ io.on('connection', function (socket){
                 'woodCutterExp': 3,
                 'mineExp' : 3,
                 'farmExp' : 3,
-                'townExp' : 3
+                'townExp' : 9
             },
             'naturalResource' :{
                 'waterExp' : 0,
@@ -94,7 +94,7 @@ io.on('connection', function (socket){
             }
         }
         io.sockets.emit("set_gameObjective", gameObjective);
-        
+
         io.sockets.emit("create_game", game_resource);    
     });
 

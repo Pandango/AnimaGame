@@ -94,6 +94,8 @@ public class OnCreateGameController : MonoBehaviour {
 
         WoodUnitTxt.text = Utilities.FormatResourceUnit(woodUnit);
         StoneUnitTxt.text = Utilities.FormatResourceUnit(stoneUnit);
+
+        CheckGameObjective();
     }
 
     void UpdateBuildingLv()
@@ -112,6 +114,8 @@ public class OnCreateGameController : MonoBehaviour {
         _mineController.UpgradeBuilding();
         _farmController.UpgradeBuilding();
         _townController.UpgradeBuilding();
+
+        CheckGameObjective();
     }
 
     void UpdateNaturalResource()
@@ -120,6 +124,8 @@ public class OnCreateGameController : MonoBehaviour {
         int waterExp = GameResourceDataModel.NaturalResources.waterExp;
 
         _forestController.UpgradeBuilding();
+
+        CheckGameObjective();
     }
 
     void UpdatePopFoodBar()
@@ -130,6 +136,49 @@ public class OnCreateGameController : MonoBehaviour {
         int balancedPercent = GameFormular.CalPopFoodBalanced(poppulationUnit, foodUnit);
         Debug.Log("BalancedPercent : " + balancedPercent);
 
+    }
+
+    public void CheckGameObjective()
+    {
+        string gameObjective = GameObjectiveDataModel.CurrentGameObjective;
+        int objectiveLv = 0;
+
+        if (gameObjective == GameObjectiveModel.FarmMax)
+        {
+            objectiveLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.farmExp);
+        }
+        else if (gameObjective == GameObjectiveModel.ForestMax)
+        {
+            objectiveLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.NaturalResources.forestExp);       
+        }
+        else if (gameObjective == GameObjectiveModel.MineMax)
+        {
+            objectiveLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.mineExp);
+        }
+        else if (gameObjective == GameObjectiveModel.TownMax)
+        {
+            objectiveLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.townExp);
+        }
+        else if (gameObjective == GameObjectiveModel.WoodCutterMax)
+        {
+            objectiveLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.woodCutterExp);
+        }
+
+        IsMissionComplete(objectiveLv);
+    }
+
+    void IsMissionComplete(int currentLv)
+    {
+        int maxLevel = 2;
+        if(currentLv >= maxLevel)
+        {
+            string gameObjectiveDescription = GameObjectiveDataModel.CurrentGameObjective;
+            GameOverModel.isMissionComplete = true;
+            GameOverModel.description = Utilities.GenerateGameObjectiveDescription(gameObjectiveDescription);
+
+            gameSocketHandler.SendReqGameOver();
+        }
+ 
     }
 
     public void CheckGameOver()
