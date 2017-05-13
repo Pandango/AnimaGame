@@ -33,10 +33,10 @@ app.post('/endturn', function(req, res){
 });
 
 var calculateEnvironmentEvent = require('./CalculateEnvironmentEvent');
-app.post('/endroundevent', function(req, res){
+app.post('/endround', function(req, res){
     var currentResource = req.body;
     var calculateEnvironmentEventObj = new calculateEnvironmentEvent();
-    
+
     var newResource = calculateEnvironmentEventObj.calculate(currentResource);
     res.send(newResource);
 });

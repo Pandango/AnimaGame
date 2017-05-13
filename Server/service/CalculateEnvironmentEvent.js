@@ -28,7 +28,7 @@ CalculateEnvironmentEvent.prototype.calculate = function(currentResource){
 
 CalculateEnvironmentEvent.prototype.generateNewResource = function (){
     var generateNewResource = this.updatedResource_;
-    generateNewResource["Event"] = this.eventName_;
+    generateNewResource["event"] = this.eventName_;
     return generateNewResource;
 };
 
