@@ -28,8 +28,17 @@ app.post('/calculate', function(req, res){
 var calculateEndTurn = require('./CalculateEndTurn');
 app.post('/endturn', function(req, res){
     var currentResource = req.body;
-    var calculatedResource = calculateEndTurn.calResourceAfterEndingTurn(currentResource)
+    var calculatedResource = calculateEndTurn.calResourceAfterEndingTurn(currentResource);
     res.send(calculatedResource);
+});
+
+var calculateEnvironmentEvent = require('./CalculateEnvironmentEvent');
+app.post('/endroundevent', function(req, res){
+    var currentResource = req.body;
+    var calculateEnvironmentEventObj = new calculateEnvironmentEvent();
+    
+    var newResource = calculateEnvironmentEventObj.calculate(currentResource);
+    res.send(newResource);
 });
 
 var clients = [];
