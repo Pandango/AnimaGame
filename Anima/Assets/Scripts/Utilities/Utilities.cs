@@ -31,6 +31,12 @@ public class Utilities : MonoBehaviour {
         return random;
     }
 
+    public static int RandomEventAfterEndTurn()
+    {
+        int randonEvent = UnityEngine.Random.Range(0, GameObjectiveDataModel.GameObjectiveTypeUnit);
+        return randonEvent;
+    }
+
     public static string FormatTimer(int timeLeft, string type)
     {
         System.TimeSpan time = System.TimeSpan.FromMilliseconds(timeLeft);
@@ -44,6 +50,12 @@ public class Utilities : MonoBehaviour {
         {
             return formatSecond;
         }    
+    }
+
+    public static string GenerateGameObjectiveDescription(string gameObjectiveKey)
+    {
+        string description = GameObjectiveDataModel.GameObjeciveDescription[gameObjectiveKey];        
+        return description;
     }
 
     public static SendingGameResource GenerateSendingGameResourceDataObj()

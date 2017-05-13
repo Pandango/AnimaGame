@@ -72,7 +72,7 @@ io.on('connection', function (socket){
     });
 
     //game play socket
-    socket.on("create_game", function(){
+    socket.on("create_game", function(gameObjective){
         game_resource = {
             'populationFoodBalanced' : {
                 'population' : 20,
@@ -93,7 +93,9 @@ io.on('connection', function (socket){
                 'forestExp' : 3
             }
         }
-        io.sockets.emit("create_game", game_resource);
+        io.sockets.emit("set_gameObjective", gameObjective);
+        
+        io.sockets.emit("create_game", game_resource);    
     });
 
     socket.on("update_game_resource", function(currentResource){

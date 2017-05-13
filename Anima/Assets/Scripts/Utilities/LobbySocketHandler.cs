@@ -51,9 +51,25 @@ public class LobbySocketHandler : MonoBehaviour {
         LoginDataModel.PlayerProfile.state = state;
     }
 
-    public void SendCreateGame()
+    public void SendCreateGame(string gameObjective)
     {
-        socket.Emit("create_game");
+        Dictionary<string, string> gameObjectiveDic = new Dictionary<string, string>();
+        gameObjectiveDic["gameObjective"] = gameObjective;
+
+        socket.Emit("create_game", new JSONObject(gameObjectiveDic));
+    }
+
+    public void GetGameObjective()
+    {
+        socket.On("set_gameObjective", UpdatedGameObjective);
+    }
+
+    void UpdatedGameObjective(SocketIOEvent evt)
+    {
+        string gameObjectJson = evt.data.GetField("gameObjective").str;
+
+        Debug.Log("gameObjective : " + gameObjectJson.ToString());
+        GameObjectiveDataModel.CurrentGameObjective = gameObjectJson;
     }
 
     public void GetCreateGame(OnLoadNewGameScene onLoadNewGameScene)

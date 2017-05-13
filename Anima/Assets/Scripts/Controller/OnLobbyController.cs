@@ -28,6 +28,7 @@ public class OnLobbyController : MonoBehaviour {
 
     void InitializeSocketHandler()
     {
+        lobbySocketHandler.GetGameObjective();
         lobbySocketHandler.GetCreateGame(OnLoadNewGame);
     }
 
@@ -46,7 +47,15 @@ public class OnLobbyController : MonoBehaviour {
 
     public void OnStartGame()
     {
-        lobbySocketHandler.SendCreateGame();  
+        string randomedObjective = RandomGameObjective();
+        lobbySocketHandler.SendCreateGame(randomedObjective);  
+    }
+
+    string RandomGameObjective()
+    {
+        int randomIndex = Utilities.RandomEventAfterEndTurn();
+        string selectedObjective = GameObjectiveDataModel.GameObjectiveList[randomIndex];
+        return selectedObjective;
     }
 
     void OnLoadNewGame()

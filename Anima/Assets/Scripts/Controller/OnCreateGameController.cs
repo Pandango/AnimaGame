@@ -7,6 +7,9 @@ using UnityEngine.UI;
 public class OnCreateGameController : MonoBehaviour {
     public GameSocketHandler gameSocketHandler;
 
+    [Header("GameObjective setter")]
+    public Text GameObjectiveTxt;
+
     [Header("Sharing Resource UI")]
     public Text WoodUnitTxt;
     public Text StoneUnitTxt;
@@ -35,12 +38,13 @@ public class OnCreateGameController : MonoBehaviour {
         _forestController = naturalGameObj[0].GetComponent<OnBuildingUpgradeController>();
 
         UpdateGameResource();
+        OnUpdateGameObjective();
 
         IntializeSocket();
     }
 
     void IntializeSocket()
-    {
+    {       
         gameSocketHandler.GetUpdatedGameResource(UpdateGameResource);
         gameSocketHandler.GetGameOver(OnLoadGameOverScene);
     }
@@ -63,6 +67,14 @@ public class OnCreateGameController : MonoBehaviour {
         naturalRes.forestExp = 0;
         naturalRes.waterExp = 0;
         GameResourceDataModel.NaturalResources = naturalRes;
+    }
+
+    public void OnUpdateGameObjective()
+    {
+        string currentGameobjectiveKey = GameObjectiveDataModel.CurrentGameObjective;
+        string gameObjectiveDescription = Utilities.GenerateGameObjectiveDescription(currentGameobjectiveKey);
+
+        GameObjectiveTxt.text = gameObjectiveDescription;
     }
 
     public void UpdateGameResource()
