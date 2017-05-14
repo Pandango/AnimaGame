@@ -98,7 +98,7 @@ io.on('connection', function (socket){
                 'townExp' : 3
             },
             'naturalResource' :{
-                'waterExp' : 0,
+                'waterExp' : 15,
                 'forestExp' : 3
             }
         }
