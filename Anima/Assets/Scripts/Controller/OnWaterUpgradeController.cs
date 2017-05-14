@@ -27,7 +27,7 @@ public class OnWaterUpgradeController : MonoBehaviour {
     void UpdateBGSprite(int exp)
     {
         int waterLv = GameFormular.CalculateEXPToLv(exp);
-        if (waterLv <= GameOverCauseByWaterLvStat.WaterLevelFlood)
+        if (waterLv <= GameOverCauseByWaterLvStat.WaterLevelDesolated)
         {
             GameBGDesolateSprite.SetActive(true);
             GameBGDefaultSprite.SetActive(false);

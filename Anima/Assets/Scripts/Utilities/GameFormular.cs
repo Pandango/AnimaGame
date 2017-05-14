@@ -4,6 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameFormular : MonoBehaviour {
+
+    public static float ConvertPercentToRatio(float percent)
+    {
+        return percent / 100f;
+    }
+
     public static int CalculateEXPToLv(int EXP)
     {
         int Lv = EXP / 3;
@@ -46,9 +52,9 @@ public class GameFormular : MonoBehaviour {
         return 100 + (100 * level);
     }
 
-    public static int CalPopFoodBalanced(int populationUnit, int foodUnit)
+    public static float CalPopFoodBalanced(int populationUnit, int foodUnit)
     {
-        int balancedPercent = (foodUnit / (populationUnit * 3)) * 100;
+        float balancedPercent = (foodUnit / (populationUnit * 3f)) * 100f;
         return balancedPercent;
 
     }

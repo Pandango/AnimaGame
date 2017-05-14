@@ -24,6 +24,13 @@ public class OnCreateGameController : MonoBehaviour {
     [Header("Notify")]
     public GameObject WaterNotify;
 
+    [Header("PopFoodBalancer")]
+    public GameObject PositivePopFoodBar;
+    public GameObject NegativePopFoodBar;
+
+    private Image _positivePopFoodBarImage;
+    private Image _negativFoodBarImage;
+
     private OnBuildingUpgradeController _woodCutterController;
     private OnBuildingUpgradeController _mineController;
     private OnBuildingUpgradeController _farmController;
@@ -41,6 +48,9 @@ public class OnCreateGameController : MonoBehaviour {
 
         _forestController = naturalGameObj[0].GetComponent<OnBuildingUpgradeController>();
         _waterController = naturalGameObj[1].GetComponent<OnWaterUpgradeController>();
+
+        _positivePopFoodBarImage = PositivePopFoodBar.GetComponent<Image>();
+        _negativFoodBarImage = NegativePopFoodBar.GetComponent<Image>();
 
         UpdateGameResource();
         OnUpdateGameObjective();
@@ -130,7 +140,26 @@ public class OnCreateGameController : MonoBehaviour {
         int poppulationUnit = GameResourceDataModel.PopulationFood.population;
         int foodUnit = GameResourceDataModel.PopulationFood.food;
 
-        int balancedPercent = GameFormular.CalPopFoodBalanced(poppulationUnit, foodUnit);
+        float balancedPercent = GameFormular.CalPopFoodBalanced(poppulationUnit, foodUnit);
+
+        float balanceRatio = GameFormular.ConvertPercentToRatio(balancedPercent);
+
+        if(balancedPercent >= 100)
+        {
+            if(balancedPercent > 100)
+            {
+                balanceRatio = 1f;
+            }
+            _positivePopFoodBarImage.fillAmount = balanceRatio;
+            _negativFoodBarImage.fillAmount = 0f;
+        }
+        else
+        {
+            float remainBlanceRatio = 1f - balanceRatio;
+            _negativFoodBarImage.fillAmount = remainBlanceRatio;
+            _positivePopFoodBarImage.fillAmount = 0f;
+        }
+        
         Debug.Log("BalancedPercent : " + balancedPercent);
 
     }
