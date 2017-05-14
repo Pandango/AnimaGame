@@ -146,7 +146,9 @@ public class OnCreateGameController : MonoBehaviour {
 
         if(balancedPercent >= 100)
         {
-            if(balancedPercent > 100)
+            float remainBlanceRatio = balanceRatio - 1f;
+
+            if (balancedPercent >= 200)
             {
                 balanceRatio = 1f;
             }
