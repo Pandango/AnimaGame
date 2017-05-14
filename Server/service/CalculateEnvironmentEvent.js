@@ -127,8 +127,21 @@ CalculateEnvironmentEvent.prototype.onTyphoon = function(){
     this.calFood(80);
 };
 
+CalculateEnvironmentEvent.prototype.manageForestResource = function(resourceExpValue){
+    if (resourceExpValue < 0){
+        return 0;
+    }
+};
+
+CalculateEnvironmentEvent.prototype.manageBuildingResource = function(resourceExpValue){
+    if (resourceExpValue < 3){
+        return 3;
+    }
+};
+
 CalculateEnvironmentEvent.prototype.calForestExp = function(unitValue){
-    this.updatedResource_.naturalResource.forestExp += unitValue;
+    var calculatedResource = (this.updatedResource_.naturalResource.forestExp + unitValue);
+    this.updatedResource_.naturalResource.forestExp = this.manageForestResource(calculatedResource);
 };
 
 CalculateEnvironmentEvent.prototype.calWaterExp = function(unitValue){
@@ -136,19 +149,23 @@ CalculateEnvironmentEvent.prototype.calWaterExp = function(unitValue){
 };
 
 CalculateEnvironmentEvent.prototype.calWoodCutterExp = function(unitValue){
-    this.updatedResource_.buildingResource.woodCutterExp += unitValue;
+    var calculatedResource = (this.updatedResource_.buildingResource.woodCutterExp + unitValue);
+    this.updatedResource_.buildingResource.woodCutterExp = this.manageBuildingResource(calculatedResource);
 };
 
 CalculateEnvironmentEvent.prototype.calMineExp = function(unitValue){
-    this.updatedResource_.buildingResource.mineExp += unitValue;
+    var calculatedResource = (this.updatedResource_.buildingResource.mineExp + unitValue)
+    this.updatedResource_.buildingResource.mineExp = this.manageBuildingResource(calculatedResource);
 };
 
 CalculateEnvironmentEvent.prototype.calFarmExp = function(unitValue){
-    this.updatedResource_.buildingResource.farmExp += unitValue;
+    var calculatedResource = (this.updatedResource_.buildingResource.farmExp + unitValue)
+    this.updatedResource_.buildingResource.farmExp = this.manageBuildingResource(calculatedResource);
 };
 
 CalculateEnvironmentEvent.prototype.calTownExp = function(unitValue){
-    this.updatedResource_.buildingResource.townExp += unitValue;
+     var calculatedResource = (this.updatedResource_.buildingResource.townExp + unitValue)
+    this.updatedResource_.buildingResource.townExp = this.manageBuildingResource(calculatedResource);
 };
 
 CalculateEnvironmentEvent.prototype.calWoodUnit = function(unitValue){
