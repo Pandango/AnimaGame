@@ -17,6 +17,10 @@ public class OnBuildingUpgradeController : MonoBehaviour {
     private GameObject gameSocketHandlerObj;
     private GameSocketHandler gameSocketHandler;
 
+    [Header("BG setter")]
+    public GameObject GameBGDefaultSprite;
+    public GameObject GameBGDesolateSprite;
+
     void Start()
     {
         UpgradeBuilding();
@@ -45,9 +49,25 @@ public class OnBuildingUpgradeController : MonoBehaviour {
         else if (buildingKeyname == BuildingKeyname.Forest)
         {
             exp = GameResourceDataModel.NaturalResources.forestExp;
+            UpdateBGSpriteInForestCase(exp);
         }
 
         UpdateBuildingSprite(exp);
+    }
+
+    void UpdateBGSpriteInForestCase(int exp)
+    {
+        int forestLv = GameFormular.CalculateEXPToLv(exp);
+        if (forestLv < 1)
+        {
+            GameBGDesolateSprite.SetActive(true);
+            GameBGDefaultSprite.SetActive(false);
+        }
+        else
+        {
+            GameBGDefaultSprite.SetActive(true);
+            GameBGDesolateSprite.SetActive(false);
+        }
     }
 
     void UpdateBuildingSprite(int exp)
@@ -55,8 +75,33 @@ public class OnBuildingUpgradeController : MonoBehaviour {
         int buildingLv = GameFormular.CalculateEXPToLv(exp);
         int buildingExp = GameFormular.RemainEXPGateAfterCalculateLv(exp);
 
-        SetBuildingSpriteLv(buildingLv);
-        SetExpBarSprite(buildingExp);
+       
+
+        if(buildingKeyname == BuildingKeyname.Forest)
+        {
+            SetForestSpriteLv(buildingLv);
+            SetExpBarSprite(buildingExp);
+        }
+        else
+        {
+            SetBuildingSpriteLv(buildingLv);
+            SetExpBarSprite(buildingExp);
+        }
+    }
+
+    void SetForestSpriteLv(int forestLv)
+    {
+        buildingLvTxt.text = Utilities.FormatDisplayLv(forestLv);
+        SpriteRenderer spriteObj = BuildingSpiteObj.GetComponent<SpriteRenderer>();
+
+        if(forestLv < 1)
+        {
+            spriteObj.sprite = BuildingLvSprite[4];
+        }
+        else
+        {
+            spriteObj.sprite = BuildingLvSprite[forestLv - 1];
+        }  
     }
 
     void SetBuildingSpriteLv(int selectedLv)
@@ -71,7 +116,15 @@ public class OnBuildingUpgradeController : MonoBehaviour {
     void SetExpBarSprite(int ExpLv)
     {
         Image spriteObj = ExpBarSpiteObj.GetComponent<Image>();
-        spriteObj.sprite = ExpBarSpite[ExpLv];
+        if (ExpLv < 0)
+        {
+            spriteObj.sprite = ExpBarSpite[0];
+        }
+        else
+        {
+            spriteObj.sprite = ExpBarSpite[ExpLv];
+        }
+       
     }
 }
 

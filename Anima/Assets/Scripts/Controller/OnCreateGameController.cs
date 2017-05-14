@@ -21,12 +21,16 @@ public class OnCreateGameController : MonoBehaviour {
     [Header("Natural Building Lv")]
     public Text ForestLvTxt;
 
+    [Header("Notify")]
+    public GameObject WaterNotify;
+
     private OnBuildingUpgradeController _woodCutterController;
     private OnBuildingUpgradeController _mineController;
     private OnBuildingUpgradeController _farmController;
     private OnBuildingUpgradeController _townController;
 
     private OnBuildingUpgradeController _forestController;
+    private OnWaterUpgradeController _waterController;
 
     void Start () {
         //MockUpResource();
@@ -36,6 +40,7 @@ public class OnCreateGameController : MonoBehaviour {
         _townController = buildingGameObj[3].GetComponent<OnBuildingUpgradeController>();
 
         _forestController = naturalGameObj[0].GetComponent<OnBuildingUpgradeController>();
+        _waterController = naturalGameObj[1].GetComponent<OnWaterUpgradeController>();
 
         UpdateGameResource();
         OnUpdateGameObjective();
@@ -100,16 +105,6 @@ public class OnCreateGameController : MonoBehaviour {
 
     void UpdateBuildingLv()
     {
-        int woodCutterEXP = GameResourceDataModel.BuildingResouces.woodCutterExp;
-        int mineEXP = GameResourceDataModel.BuildingResouces.mineExp;
-        int farmEXP = GameResourceDataModel.BuildingResouces.farmExp;
-        int townEXP = GameResourceDataModel.BuildingResouces.townExp;
-
-        int woodCutterLv = GameFormular.CalculateEXPToLv(woodCutterEXP);
-        int mineLv = GameFormular.CalculateEXPToLv(mineEXP);
-        int farmLv = GameFormular.CalculateEXPToLv(farmEXP);
-        int townLv = GameFormular.CalculateEXPToLv(townEXP);
-
         _woodCutterController.UpgradeBuilding();
         _mineController.UpgradeBuilding();
         _farmController.UpgradeBuilding();
@@ -124,7 +119,9 @@ public class OnCreateGameController : MonoBehaviour {
         int waterExp = GameResourceDataModel.NaturalResources.waterExp;
 
         _forestController.UpgradeBuilding();
+        _waterController.UpgradeWater();
 
+        OnWaterLevelOver();
         CheckGameObjective();
     }
 
@@ -169,7 +166,7 @@ public class OnCreateGameController : MonoBehaviour {
 
     void IsMissionComplete(int currentLv)
     {
-        int maxLevel = 2;
+        int maxLevel = Utilities.MaximumAllowLevel;
         if(currentLv >= maxLevel)
         {
             string gameObjectiveDescription = GameObjectiveDataModel.CurrentGameObjective;
@@ -178,7 +175,6 @@ public class OnCreateGameController : MonoBehaviour {
 
             gameSocketHandler.SendReqGameOver();
         }
- 
     }
 
     public void CheckGameOver()
@@ -192,6 +188,44 @@ public class OnCreateGameController : MonoBehaviour {
 
             gameSocketHandler.SendReqGameOver();
         }    
+    }
+
+    public void OnWaterLevelOver()
+    {
+        int waterLevel = GameFormular.CalculateEXPToLv(GameResourceDataModel.NaturalResources.waterExp);
+
+        int allowMinimunLv = GameOverCauseByWaterLvStat.WaterLevelOverDesolated;
+        int allowMaximumLv = GameOverCauseByWaterLvStat.WaterLevelOverFlood;
+
+        int notifyMinumLv = GameOverCauseByWaterLvStat.WaterLevelDesolated;
+        int notifyMaximunLv = GameOverCauseByWaterLvStat.WaterLevelFlood;
+
+        if (waterLevel <= allowMinimunLv)
+        {
+            GameOverModel.isMissionComplete = false;
+            GameOverModel.description = SituationDescription.Desolation;
+
+            gameSocketHandler.SendReqGameOver();
+        }
+        else if (waterLevel > allowMinimunLv && waterLevel <= notifyMinumLv)
+        {
+            WaterNotify.SetActive(true);
+        }
+        else if (waterLevel >= notifyMaximunLv && waterLevel < allowMaximumLv)
+        {
+            WaterNotify.SetActive(true);
+        }
+        else if (waterLevel >= allowMaximumLv)
+        {
+            GameOverModel.isMissionComplete = false;
+            GameOverModel.description = SituationDescription.Flood;
+
+            gameSocketHandler.SendReqGameOver();
+        }
+        else
+        {
+            WaterNotify.SetActive(false);
+        }
     }
 
     void OnLoadGameOverScene()

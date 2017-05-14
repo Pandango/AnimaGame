@@ -20,7 +20,10 @@ public class OnCardController : MonoBehaviour {
 
     public void UpdateCardData()
     {
-        if(cardKeyname == "FARM")
+        stoneUsage = CardDataModel.FarmCardModel.stoneUsage;
+        woodUsage = CardDataModel.FarmCardModel.woodUsage;
+
+        if (cardKeyname == "FARM")
         {
             stoneUsageTxt.text = CardDataModel.FarmCardModel.stoneUsage.ToString();
             woodUsageTxt.text = CardDataModel.FarmCardModel.woodUsage.ToString();

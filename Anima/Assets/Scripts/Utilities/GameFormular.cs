@@ -53,3 +53,12 @@ public class GameFormular : MonoBehaviour {
 
     }
 }
+
+public static class GameOverCauseByWaterLvStat
+{
+    public static int WaterLevelDesolated = 3;
+    public static int WaterLevelOverDesolated = 1;
+
+    public static int WaterLevelFlood = 7;
+    public static int WaterLevelOverFlood = 9;
+}

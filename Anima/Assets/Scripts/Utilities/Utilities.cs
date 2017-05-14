@@ -6,6 +6,7 @@ using UnityEngine;
 public class Utilities : MonoBehaviour {
 
     public static int MaximumMiliSecondsPerTurn = 8000;
+    public static int MaximumAllowLevel = 4;
 
     public static int StartCardUnit
     {

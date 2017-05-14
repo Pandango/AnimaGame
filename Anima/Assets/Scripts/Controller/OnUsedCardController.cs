@@ -23,19 +23,76 @@ public class OnUsedCardController : MonoBehaviour {
         {
             if (cards[index].GetComponent<OnSelectCardController>().IsSelected)
             {
-                CalResourceAfterUsed();
+                if (IsResourceEnough(cards[index]) && IsNaturalResourceEnough())
+                {
+                    CalResourceAfterUsed();
 
-                //reset selectedcard;
-                cards[index].GetComponent<OnSelectCardController>().SetDefaultOtherCards();
-                _onPlayerController.DeleteCard(cards[index]);
+                    //reset selectedcard;
+                    cards[index].GetComponent<OnSelectCardController>().SetDefaultOtherCards();
+                    _onPlayerController.DeleteCard(cards[index]);
 
-               
-
-                //calculate current resouce
-                //call toserver to update resource
-
+                }
+                else
+                {
+                    //tell player resource not enough or playsound
+                }
             }
         }
+    }
+
+    bool IsResourceEnough(GameObject usedCard)
+    {
+        bool isResourceEnough = true;
+        int woodUsage = usedCard.GetComponent<OnCardController>().woodUsage;
+        int stoneUsage = usedCard.GetComponent<OnCardController>().stoneUsage;
+
+        int curretnStoneUnit = GameResourceDataModel.SharingResources.stone;
+        int currentWoodUnit = GameResourceDataModel.SharingResources.wood;
+
+        if(woodUsage > currentWoodUnit)
+        {
+            isResourceEnough = false;
+        }
+
+        if(stoneUsage > curretnStoneUnit)
+        {
+            isResourceEnough = false;
+        }
+
+        return isResourceEnough;
+    }
+
+    bool IsNaturalResourceEnough()
+    {
+        bool isNaturalResourceEnough = true;
+        string usedCard = SelectedCardDataModel.SelectedCardKeyName;
+
+        if (usedCard == "FARM")
+        {
+            if (GameResourceDataModel.NaturalResources.waterExp < 1)
+                isNaturalResourceEnough = false;
+        }
+        else if (usedCard == "MINE")
+        {
+            if (GameResourceDataModel.NaturalResources.waterExp < 1)
+                isNaturalResourceEnough = false;
+        }
+        else if (usedCard == "WOODCUTTER")
+        {
+            if (GameResourceDataModel.NaturalResources.forestExp < 1)
+                isNaturalResourceEnough = false;
+        }
+        else if (usedCard == "TOWN")
+        {
+            if (GameResourceDataModel.NaturalResources.forestExp < 1)
+                isNaturalResourceEnough = false;
+        }
+        else if (usedCard == "TREE")
+        {
+            if (GameResourceDataModel.NaturalResources.waterExp < 1)
+                isNaturalResourceEnough = false;
+        }
+        return isNaturalResourceEnough;
     }
 
     public void CalResourceAfterUsed()
