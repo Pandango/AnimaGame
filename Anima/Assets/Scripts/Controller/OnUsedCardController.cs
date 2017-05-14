@@ -23,7 +23,8 @@ public class OnUsedCardController : MonoBehaviour {
         {
             if (cards[index].GetComponent<OnSelectCardController>().IsSelected)
             {
-                if (IsResourceEnough(cards[index]) && IsNaturalResourceEnough())
+                bool isUsable = IsResourceEnough(cards[index]) && IsNaturalResourceEnough() && IsBuildingNotLevelMax();
+                if (isUsable)
                 {
                     CalResourceAfterUsed();
 
@@ -38,6 +39,42 @@ public class OnUsedCardController : MonoBehaviour {
                 }
             }
         }
+    }
+
+    bool IsBuildingNotLevelMax()
+    {
+        bool isBuildingNotLevelMax = true;
+        string usedCard = SelectedCardDataModel.SelectedCardKeyName;
+        int buildingLv = 0;
+
+        if (usedCard == "FARM")
+        {
+            buildingLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.farmExp);
+        }
+        else if (usedCard == "MINE")
+        {
+            buildingLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.mineExp);
+        }
+        else if (usedCard == "WOODCUTTER")
+        {
+            buildingLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.woodCutterExp);
+        }
+        else if (usedCard == "TOWN")
+        {
+            buildingLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.townExp);
+        }
+        else if (usedCard == "TREE")
+        {
+            buildingLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.NaturalResources.forestExp);
+        }
+
+        if(buildingLv >= Utilities.MaximumAllowLevel)
+        {
+            isBuildingNotLevelMax = false;
+        }
+
+
+        return isBuildingNotLevelMax;
     }
 
     bool IsResourceEnough(GameObject usedCard)
