@@ -13,6 +13,7 @@ public class OnCreateGameController : MonoBehaviour {
     [Header("Sharing Resource UI")]
     public Text WoodUnitTxt;
     public Text StoneUnitTxt;
+    public Text TotalPopulationTxt;
 
     [Header("BuildingGameObject")]
     public List<GameObject> buildingGameObj;
@@ -106,9 +107,11 @@ public class OnCreateGameController : MonoBehaviour {
     {
         int stoneUnit = GameResourceDataModel.SharingResources.stone;
         int woodUnit = GameResourceDataModel.SharingResources.wood;
+        int population = GameResourceDataModel.PopulationFood.population;
 
         WoodUnitTxt.text = Utilities.FormatResourceUnit(woodUnit);
         StoneUnitTxt.text = Utilities.FormatResourceUnit(stoneUnit);
+        TotalPopulationTxt.text = population.ToString();
 
         CheckGameObjective();
     }
@@ -262,5 +265,12 @@ public class OnCreateGameController : MonoBehaviour {
     void OnLoadGameOverScene()
     {
         SceneManager.LoadScene("GameOver", LoadSceneMode.Single);
+        //StartCoroutine("WaitForLoadingScene");
+    }
+
+    IEnumerator WaitForLoadingScene()
+    {
+        SceneManager.LoadScene("GameOver", LoadSceneMode.Single);
+        yield return new WaitForSeconds(2f);  
     }
 }

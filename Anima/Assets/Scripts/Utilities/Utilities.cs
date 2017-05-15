@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Utilities : MonoBehaviour {
 
-    public static int MaximumMiliSecondsPerTurn = 8000;
+    public static int MaximumMiliSecondsPerTurn = 30000;
     public static int MaximumAllowLevel = 4;
 
     public static int StartCardUnit
@@ -24,6 +24,12 @@ public class Utilities : MonoBehaviour {
     public static string FormatResourceUnit(int unit)
     {
         return "X " + unit.ToString();
+    }
+
+    public static int GetRandomUnitOfCard()
+    {
+        int random = UnityEngine.Random.Range(1, 3);
+        return random;
     }
 
     public static int RandomCard()

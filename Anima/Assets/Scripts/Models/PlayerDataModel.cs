@@ -19,6 +19,7 @@ public class PlayerDataModel : MonoBehaviour {
     public static string RoundEvent { get; set; }
 
     public static bool IsFirstTurn = true;
+    public static bool IsFirstPlayerInNewRound = false;
 }
 
 [Serializable]

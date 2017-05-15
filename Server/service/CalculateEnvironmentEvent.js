@@ -123,8 +123,6 @@ CalculateEnvironmentEvent.prototype.onTyphoon = function(){
     this.calMineExp(-3);
     this.calWoodCutterExp(-3);
     this.calTownExp(-3);
-
-    this.calFood(80);
 };
 
 CalculateEnvironmentEvent.prototype.manageForestResource = function(resourceExpValue){

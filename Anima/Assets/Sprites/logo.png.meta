@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: aa49654256371944a9042cbb39797d0c
-timeCreated: 1494509983
+timeCreated: 1494792721
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -82,13 +82,13 @@ TextureImporter:
       name: logo_0
       rect:
         serializedVersion: 2
-        x: 104
-        y: 97
-        width: 389
-        height: 262
+        x: 100
+        y: 63
+        width: 400
+        height: 312
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 9}
+      border: {x: 0, y: 0, z: 0, w: 4}
       outline: []
       tessellationDetail: 0
     outline: []

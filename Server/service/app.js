@@ -176,6 +176,11 @@ io.on('connection', function (socket){
             if(clients[userCouter].username === currentUser.username){
                 console.log("User " + clients[userCouter].username + " disconnected");
                 clients.splice(userCouter, 1);
+
+                
+                if(ingame_clients.length >= 0){ //after run game will have ingame_client clear when disconnect
+                    ingame_clients.splice(userCouter, 1 );
+                }
             }
         }
         io.sockets.emit("current_client", {clients});

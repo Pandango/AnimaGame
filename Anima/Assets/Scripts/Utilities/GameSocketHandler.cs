@@ -179,7 +179,7 @@ public class GameSocketHandler : MonoBehaviour {
     {
         Debug.Log("test" + evt.data);
 
-        GameOverModel.isMissionComplete = evt.data.GetField("isMissionComplete");
+        GameOverModel.isMissionComplete = bool.Parse(evt.data.GetField("isMissionComplete").str);
         GameOverModel.description = evt.data.GetField("description").ToString();
         callbackOnGameOver();
 
@@ -200,7 +200,6 @@ public class GameSocketHandler : MonoBehaviour {
     void UpdateResourceAfterRoundEvent(SocketIOEvent evt)
     {
         string updatedResource = evt.data.ToString();
-
 
         JSONObject endRoundEvent = evt.data.GetField("gameEvent");
         PlayerDataModel.RoundEvent = endRoundEvent.str;

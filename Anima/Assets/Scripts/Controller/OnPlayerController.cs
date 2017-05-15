@@ -11,6 +11,7 @@ public class OnPlayerController : MonoBehaviour {
     private bool IsSocketConnected = false;
     public CardDataModel cardModel;
 
+    private bool isEnableTosetNextTurn= false;
     private bool isRunTimer = false;
     private float _timeSecondCounter = 0;
 
@@ -20,11 +21,16 @@ public class OnPlayerController : MonoBehaviour {
     public Text CurrentRoleTxt;
     public Text TimerMiliTxt;
     public Text TimerSecondsTxt;
-    public Text EventTxt;
 
     [Header("Player Action Panel")]
     public Button UsedCardBtn;
     public Button EndTurnBtn;
+
+    [Header("Dialog")]
+    public GameObject TurnNotifyDialog;
+    public GameObject EventAtStartRoundDialog;
+    public Text DialogHeader;
+    public Text DialogDescription;
 
     void Start()
     {  
@@ -43,11 +49,16 @@ public class OnPlayerController : MonoBehaviour {
 
     void OnLoadPlayer()
     {
-        StartCoroutine("LoadPlayer");
+        //StartCoroutine("LoadPlayer");   
+        if (IsAllPlayerJoiningGame())
+        {
+            print("All Player Ready");
+            gameSocketHandler.SendRequestSortedPlayerRole();
+        }
     }
 
     IEnumerator LoadPlayer()
-    {
+    {   
         yield return new WaitForSeconds(1f);
         if (IsAllPlayerJoiningGame())
         {
@@ -57,7 +68,7 @@ public class OnPlayerController : MonoBehaviour {
         else
         {
             StartCoroutine("LoadPlayer");
-        }      
+        }
     }
 
     void SetCardStarter()
@@ -96,12 +107,23 @@ public class OnPlayerController : MonoBehaviour {
 
     public void UpdateGameTurn()
     {
+        //if start player when start new round will wait untill the dialog disable
+        
         string currentPlayerNameTurn = PlayerDataModel.gameCurrentTurnData.playerNameInCurrentTurn;
         int turnNo = PlayerDataModel.gameCurrentTurnData.turnNo;
 
         if(PlayerDataModel.PlayerInGameData.username == currentPlayerNameTurn)
         {
-            SetPlayerTurn(true, currentPlayerNameTurn);
+            if (turnNo == 1)
+            {
+                PlayerDataModel.IsFirstPlayerInNewRound = true;
+            }
+            else
+            {
+                PlayerDataModel.IsFirstPlayerInNewRound = false;
+            }
+
+            SetPlayerTurn(true, currentPlayerNameTurn);    
         }
         else
         {
@@ -111,16 +133,11 @@ public class OnPlayerController : MonoBehaviour {
 
     public void UpdateEndTurnGameResource()
     {
-        if (PlayerDataModel.IsFirstTurn)
-        {
-            PlayerDataModel.IsFirstTurn = false;
-        }
-        else
+        if (!PlayerDataModel.IsFirstTurn)
         {
             string jsonObj = JsonUtility.ToJson(Utilities.GenerateSendingGameResourceDataObj(), true);
             calculatorService.SendReqCalEndTurnResource(jsonObj);
-        }
-        
+        }      
     }
 
     void SetPlayerTurn(bool isTurned , string currentPlayerNameTurn)
@@ -130,9 +147,14 @@ public class OnPlayerController : MonoBehaviour {
             ResetTimer();
             CurrentRoleTxt.text = "-";
 
-            UsedCardBtn.gameObject.SetActive(true);
-            EndTurnBtn.gameObject.SetActive(true);
-            isRunTimer = true;
+            if (PlayerDataModel.IsFirstPlayerInNewRound && !PlayerDataModel.IsFirstTurn)
+            {
+                StartCoroutine("WaitDialog");
+            }
+            else
+            {
+                StartCoroutine("WaitBeforeStartTurn");
+            }         
         }
         else
         {
@@ -142,6 +164,38 @@ public class OnPlayerController : MonoBehaviour {
             EndTurnBtn.gameObject.SetActive(false);
             isRunTimer = false;
         }
+    }
+
+    IEnumerator WaitDialog()
+    {
+        yield return new WaitForSeconds(3f);
+        StartCoroutine("WaitBeforeStartTurn");
+    }
+
+    IEnumerator WaitBeforeStartTurn()
+    {
+        TurnNotifyDialog.SetActive(true);
+        yield return new WaitForSeconds(2f);
+
+        TurnNotifyDialog.SetActive(false);
+        isRunTimer = true;
+        UsedCardBtn.gameObject.SetActive(true);
+        EndTurnBtn.gameObject.SetActive(true);
+        GetRandomUnitOfDrawingCard();
+        // tell cleint that this is your turn
+    }
+
+    void GetRandomUnitOfDrawingCard()
+    {
+        int unit = Utilities.GetRandomUnitOfCard();
+
+        if (!PlayerDataModel.IsFirstTurn)
+        {
+            for (int index = 0; index < unit; index++)
+            {
+                OnDrawCard();
+            }
+        }       
     }
 
     void IntialiazSocket()
@@ -154,8 +208,8 @@ public class OnPlayerController : MonoBehaviour {
                 gameSocketHandler.SendUpdateJoinGame(UpdatePlayerInfoUI);
 
                 gameSocketHandler.GetSortedPlayerRole();
-                gameSocketHandler.GetGameTurnData(UpdateGameTurn, UpdateEndTurnGameResource);
                 gameSocketHandler.GetRandomEventAfterEndRound(DisplayEventAfterEventTurn);
+                gameSocketHandler.GetGameTurnData(UpdateGameTurn, UpdateEndTurnGameResource);            
             }
         }
     }
@@ -174,20 +228,29 @@ public class OnPlayerController : MonoBehaviour {
         int maximunSecondPerTurn = Utilities.MaximumMiliSecondsPerTurn;
         _timeSecondCounter += Time.deltaTime * 1000;
 
-        if (_timeSecondCounter <= 8000 && _timeSecondCounter >= 0)
+        if (_timeSecondCounter <= Utilities.MaximumMiliSecondsPerTurn && _timeSecondCounter >= 0)
         {          
             TimerMiliTxt.text = Utilities.FormatTimer((int)(maximunSecondPerTurn - _timeSecondCounter), "mili");
             TimerSecondsTxt.text = Utilities.FormatTimer((int)(maximunSecondPerTurn - _timeSecondCounter), "seconds");
+            isEnableTosetNextTurn = true;
         }
         else
         {
             SetDefaultTimerTxt();
+
+            if (isEnableTosetNextTurn)
+            {
+                SetToNextTurn();
+                isEnableTosetNextTurn = false;
+            }
+               
             //send to server to set next turn
         } 
     }
 
     public void SetToNextTurn()
     {
+        PlayerDataModel.IsFirstTurn = false;
 
         int currentTurnNo = PlayerDataModel.gameCurrentTurnData.turnNo;
 
@@ -200,7 +263,7 @@ public class OnPlayerController : MonoBehaviour {
         }
         else
         {
-            StartNewRound();
+            StartNewRound();       
         }         
     }
 
@@ -208,25 +271,33 @@ public class OnPlayerController : MonoBehaviour {
     {
         string jsonObj = JsonUtility.ToJson(Utilities.GenerateSendingGameResourceDataObj(), true);
         calculatorService.SendReqEventRandomAfterEndRound(jsonObj);
-
-        gameSocketHandler.SendRequestSortedPlayerRole();
-
+        gameSocketHandler.SendRequestSortedPlayerRole();   
     }
+
+    void DisplayEventPopupDialog()
+    {
+        StartCoroutine("DisplayEventDialog");
+    }
+
+    IEnumerator DisplayEventDialog()
+    {
+        EventAtStartRoundDialog.SetActive(true);
+        string EventKeyName = PlayerDataModel.RoundEvent; 
+        DialogHeader.text = EventDataModel.EventHeaderList[EventKeyName];
+        DialogDescription.text = EventDataModel.EventDescriptionList[EventKeyName];
+        yield return new WaitForSeconds(2);
+
+        DialogDescription.text = EventDataModel.EventDescriptionEffectList[EventKeyName];
+        yield return new WaitForSeconds(1);
+
+        EventAtStartRoundDialog.SetActive(false);
+    } 
 
     void DisplayEventAfterEventTurn()
     {
-        EventTxt.text = PlayerDataModel.RoundEvent;
+        DisplayEventPopupDialog();
     }
-    //IEnumerator StartCounter()
-    //{
-    //    yield return new WaitForSeconds(1f);
-    //    if (_timeSecondCounter <= 8 && _timeSecondCounter >= 0)
-    //    {
-    //        _timeSecondCounter++;
 
-    //        StartCoroutine("StartCounter");
-    //    }
-    //}
     bool IsAllPlayerJoiningGame()
     {
         if (LoginDataModel.ClientsUnit == PlayerDataModel.ClientUnit)
@@ -242,6 +313,8 @@ public class OnPlayerController : MonoBehaviour {
     void ResetTimer()
     {
         _timeSecondCounter = 0;
+        isRunTimer = false;
+        SetDefaultTimerTxt();
     }
 
     void SetDefaultTimerTxt()

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameOverModel : MonoBehaviour {
+public class GameOverModel {
     public static bool isMissionComplete;
     public static string description;
 }

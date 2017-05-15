@@ -7,7 +7,7 @@ public class GameCalculatorService : MonoBehaviour {
     private GameObject gameSocketHandlerObj;
     private GameSocketHandler gameSocketHandler;
 
-    public string hostUrl = "http://192.168.1.5:8080";
+    public string hostUrl = "http://10.122.5.93:8080";
 
     void Start()
     {
