@@ -43,9 +43,11 @@ app.post('/endround', function(req, res){
 var clients = [];
 var ingame_clients = [];
 var currentUser;
-var current_ingame_user;
+
 var game_resource;
 var gameOverData;
+
+var isGameStart;
 
 io.on('connection', function (socket){
     
@@ -102,7 +104,6 @@ io.on('connection', function (socket){
             }
         }
         io.sockets.emit("set_gameObjective", gameObjective);
-
         io.sockets.emit("create_game", game_resource);    
     });
 
@@ -116,7 +117,7 @@ io.on('connection', function (socket){
     })
 
     socket.on("join_game", function(playerdata){
-         current_ingame_user = {
+         var current_ingame_user = {
                 'username' : playerdata.username,
                 'role': playerdata.role,
                 'score': 0
@@ -166,21 +167,17 @@ io.on('connection', function (socket){
     });
 
     socket.on("disconnect", function (){
-        socket.broadcast.emit("user_disconnect", currentUser);   
-
-        if(ingame_clients.length >= 0){ //after run game will have ingame_client clear when disconnect
-            clients = ingame_clients;
-        }
-
         for(var userCouter = 0; userCouter < clients.length; userCouter++){
             if(clients[userCouter].username === currentUser.username){
-                console.log("User " + clients[userCouter].username + " disconnected");
+                console.log("User " + clients[userCouter].username + " disconnected from lobby");
                 clients.splice(userCouter, 1);
-
-                
-                if(ingame_clients.length >= 0){ //after run game will have ingame_client clear when disconnect
+            }
+                            
+            if(ingame_clients.length > 0){ //after run game will have ingame_client clear when disconnect
+                if(ingame_clients[userCouter].username === currentUser.username){
+                    console.log("User " + ingame_clients[userCouter].username + " disconnected form game");
                     ingame_clients.splice(userCouter, 1 );
-                }
+                }                  
             }
         }
         io.sockets.emit("current_client", {clients});
