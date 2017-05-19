@@ -10,6 +10,8 @@ public class OnLoginController : MonoBehaviour {
     public InputField playerNameField;
     public Button startBtn;
 
+    public AudioSource LoginableSound;
+
     void Start()
     {
         loginSocketHandler = loginSocketHandler.GetComponent<LoginSocketHandler>();
@@ -22,6 +24,8 @@ public class OnLoginController : MonoBehaviour {
 
         if(isNameApprove)
         {
+            LoginableSound.Play();
+
             Dictionary<string, string> playerData = new Dictionary<string, string>();
             playerData["username"] = playerNameField.text;
             playerData["state"] = UserState.Waiting;

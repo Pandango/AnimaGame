@@ -21,7 +21,7 @@ public class OnWaterUpgradeController : MonoBehaviour {
         
         this.gameObject.transform.localPosition = WaterLevelTransform[waterLv - 1];
 
-        UpdateBGSprite(exp);
+        //UpdateBGSprite(exp);
     }
 
     void UpdateBGSprite(int exp)

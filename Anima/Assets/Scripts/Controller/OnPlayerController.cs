@@ -32,6 +32,8 @@ public class OnPlayerController : MonoBehaviour {
     public Text DialogHeader;
     public Text DialogDescription;
 
+    [Header("Sound")]
+    public AudioSource endBtnClickSound;
     void Start()
     {  
         IntialiazSocket();
@@ -48,26 +50,11 @@ public class OnPlayerController : MonoBehaviour {
     }
 
     void OnLoadPlayer()
-    {
-        //StartCoroutine("LoadPlayer");   
+    { 
         if (IsAllPlayerJoiningGame())
         {
             print("All Player Ready");
             gameSocketHandler.SendRequestSortedPlayerRole();
-        }
-    }
-
-    IEnumerator LoadPlayer()
-    {   
-        yield return new WaitForSeconds(1f);
-        if (IsAllPlayerJoiningGame())
-        {
-            print("All Player Ready");
-            gameSocketHandler.SendRequestSortedPlayerRole();
-        }
-        else
-        {
-            StartCoroutine("LoadPlayer");
         }
     }
 
@@ -250,6 +237,7 @@ public class OnPlayerController : MonoBehaviour {
 
     public void SetToNextTurn()
     {
+        endBtnClickSound.Play();
         PlayerDataModel.IsFirstTurn = false;
 
         int currentTurnNo = PlayerDataModel.gameCurrentTurnData.turnNo;
@@ -312,9 +300,9 @@ public class OnPlayerController : MonoBehaviour {
 
     void ResetTimer()
     {
+        SetDefaultTimerTxt();
         _timeSecondCounter = 0;
         isRunTimer = false;
-        SetDefaultTimerTxt();
     }
 
     void SetDefaultTimerTxt()

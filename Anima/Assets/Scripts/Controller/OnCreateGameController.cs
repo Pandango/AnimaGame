@@ -40,7 +40,11 @@ public class OnCreateGameController : MonoBehaviour {
     private OnBuildingUpgradeController _forestController;
     private OnWaterUpgradeController _waterController;
 
+    [Header("Sound")]
+    public AudioSource bgmSound;
+
     void Start () {
+        bgmSound.Play();
         //MockUpResource();
         _woodCutterController = buildingGameObj[0].GetComponent<OnBuildingUpgradeController>();
         _mineController = buildingGameObj[1].GetComponent<OnBuildingUpgradeController>();
@@ -244,6 +248,7 @@ public class OnCreateGameController : MonoBehaviour {
         else if (waterLevel > allowMinimunLv && waterLevel <= notifyMinumLv)
         {
             WaterNotify.SetActive(true);
+            
         }
         else if (waterLevel >= notifyMaximunLv && waterLevel < allowMaximumLv)
         {

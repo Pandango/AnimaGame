@@ -7,7 +7,11 @@ public class OnUsedCardController : MonoBehaviour {
     private OnPlayerController _onPlayerController;
 
     public GameCalculatorService calculatorService;
- 
+
+    [Header("Sound")]
+    public AudioSource BtnClickSound;
+    public AudioSource UpdatedResourceSound;
+
     void Start()
     {
         _onPlayerControllerObj = GameObject.Find("GameManager");
@@ -17,6 +21,7 @@ public class OnUsedCardController : MonoBehaviour {
 
     public void OnUsedCard()
     {
+        
         GameObject[] cards = GameObject.FindGameObjectsWithTag("Card");
 
         for (int index = 0; index < cards.Length; index++)
@@ -26,6 +31,8 @@ public class OnUsedCardController : MonoBehaviour {
                 bool isUsable = IsResourceEnough(cards[index]) && IsNaturalResourceEnough() && IsBuildingNotLevelMax();
                 if (isUsable)
                 {
+                    BtnClickSound.Play();
+                    UpdatedResourceSound.Play();
                     CalResourceAfterUsed();
 
                     //reset selectedcard;

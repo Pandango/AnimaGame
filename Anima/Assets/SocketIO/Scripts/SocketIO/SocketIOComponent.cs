@@ -83,9 +83,9 @@ namespace SocketIO
 
 		#endregion
 
-		#if SOCKET_IO_DEBUG
+		// SOCKET_IO_DEBUG
 		public Action<string> debugMethod;
-		#endif
+		//endif
 
 		#region Unity interface
 
@@ -114,9 +114,9 @@ namespace SocketIO
 
 			connected = false;
 
-			#if SOCKET_IO_DEBUG
+			//if SOCKET_IO_DEBUG
 			if(debugMethod == null) { debugMethod = Debug.Log; };
-			#endif
+			//endif
 		}
 
 		public void Start()

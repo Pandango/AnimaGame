@@ -16,6 +16,9 @@ public class OnLobbyController : MonoBehaviour {
     public Sprite ReadyBtnSprite;
     public Sprite UnReadyBtnSprite;
 
+    [Header("Sound")]
+    public AudioSource BtnClickSound;
+
     void Start()
     {
         SetDefaultLobbyValue();
@@ -47,6 +50,8 @@ public class OnLobbyController : MonoBehaviour {
 
     public void OnStartGame()
     {
+        BtnClickSound.Play();
+
         string randomedObjective = RandomGameObjective();
         lobbySocketHandler.SendCreateGame(randomedObjective);  
     }
@@ -65,6 +70,8 @@ public class OnLobbyController : MonoBehaviour {
 
     public void OnReady()
     {
+        BtnClickSound.Play();
+
         string currentState = LoginDataModel.PlayerProfile.state;
         string playerName = LoginDataModel.PlayerProfile.username;
         string state;

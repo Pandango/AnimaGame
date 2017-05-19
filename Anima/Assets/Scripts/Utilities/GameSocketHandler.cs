@@ -30,8 +30,6 @@ public class GameSocketHandler : MonoBehaviour {
 
     public void SendUpdateJoinGame(OnUpdatePlayerInfo callbackOnUpdatePlayerInfo)
     {
-        //string playerName = "Panda mai dai norn";
-        //int role = 0;
         string playerName = LoginDataModel.PlayerProfile.username;
         int role = LoginDataModel.PlayerRole;
 

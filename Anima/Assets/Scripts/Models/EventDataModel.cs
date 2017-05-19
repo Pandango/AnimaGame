@@ -40,7 +40,7 @@ public class EventDataModel : MonoBehaviour
         { EventObjectModel.Food, "ผลผลิตงอกงาม สามารถเก็บเกี่ยวอาหารได้มาก" },
         { EventObjectModel.Population, "บ้านเมืองเจริญรุ่งเรือง ผู้คนอพยพเข้าเมือง"},
         { EventObjectModel.Tree, "ป่าไม้อุดมสมบูรณ์ สร้างร่มเงาให้แก่มนุษย์และสัตว์"},
-        { EventObjectModel.Wildfire, "กลุ่มนายพรายทิ้งเสษบุหรี่ ไฟจึงลามไหม้ป่า" },
+        { EventObjectModel.Wildfire, "กลุ่มนายพรายทิ้งเศษบุหรี่ ไฟจึงลามไหม้ป่า" },
         { EventObjectModel.flood, "ปริมาณน้ำสะสมมากเกินไป จนไหลท่วมบ้านเรือน" },
         { EventObjectModel.GroundCollapse, "โพรงใต้ดินทรุดตัว บ้านเมืองเกิดความเสียหาย" },
         { EventObjectModel.Desolation, "ขาดแคลนน้ำจนไม่เพียงพอต่อการบริโภค" },

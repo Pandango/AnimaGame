@@ -16,10 +16,14 @@ public class GameOverManager : MonoBehaviour {
     public GameObject DesolateBG;
     public GameObject DefaultBG;
 
+    public AudioSource bgmSoundMissionConplete;
+    public AudioSource bgmMissionFailed;
+
     void Start()
     {
         bool isMissionComplete = GameOverModel.isMissionComplete;
 
+        bgmSoundMissionConplete.Play();
         if (isMissionComplete)
         {
             SetUIAsMissionComplete();

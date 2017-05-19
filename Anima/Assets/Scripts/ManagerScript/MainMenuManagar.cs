@@ -8,8 +8,12 @@ public class MainMenuManagar : MonoBehaviour {
     public GameObject LobbyManagerObj;
     public GameObject LoginManagerObj;
 
+    public AudioSource bgmSound;
+
 	// Use this for initialization
 	void Start () {
+        bgmSound.Play();
+
         LobbyManagerObj.SetActive(false);
         LoginManagerObj.SetActive(true);
 	}

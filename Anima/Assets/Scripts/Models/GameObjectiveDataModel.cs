@@ -21,11 +21,11 @@ public class GameObjectiveDataModel : MonoBehaviour {
 
     public static Dictionary<string, string> GameObjeciveDescription = new Dictionary<string, string>()
     {
-        { GameObjectiveModel.FarmMax, "Get maximun 'Farm' level." },
-        { GameObjectiveModel.ForestMax, "Get maximun 'Forest' level." },
-        { GameObjectiveModel.MineMax, "Get maximun 'Mine' level." },
-        { GameObjectiveModel.TownMax, "Get maximun 'Town' level." },
-        { GameObjectiveModel.WoodCutterMax, "Get maximun 'Wood cutter' level."},
+        { GameObjectiveModel.FarmMax, "Get maximum 'Farm' level." },
+        { GameObjectiveModel.ForestMax, "Get maximum 'Forest' level." },
+        { GameObjectiveModel.MineMax, "Get maximum 'Mine' level." },
+        { GameObjectiveModel.TownMax, "Get maximum 'Town' level." },
+        { GameObjectiveModel.WoodCutterMax, "Get maximum 'Wood cutter' level."},
     };
 }
 
