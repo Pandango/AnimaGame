@@ -47,12 +47,12 @@ var currentUser;
 var game_resource;
 var gameOverData;
 
-var isGameStart;
+var isGameStart = false;
 
 io.on('connection', function (socket){
     
     socket.on("login", function(data){
-        if(clients.length < 4){
+        if(clients.length < 4 && isGameStart === false){
             currentUser = {
                 'username' : data.username,
                 'state': data.state
@@ -83,6 +83,8 @@ io.on('connection', function (socket){
 
     //game play socket
     socket.on("create_game", function(gameObjective){
+        isGameStart = true;
+
         game_resource = {
             'populationFoodBalanced' : {
                 'population' : 20,
@@ -158,6 +160,7 @@ io.on('connection', function (socket){
 
     socket.on("game_over", function(reqGameOver){
         gameOverData = reqGameOver;
+        isGameStart = false;
         io.sockets.emit("game_over", gameOverData);
     });
 
@@ -180,6 +183,11 @@ io.on('connection', function (socket){
                 }                  
             }
         }
+
+        if(ingame_clients.length <= 0){
+            isGameStart = false;
+        }
+        io.sockets.emit("current_ingame_clients", {ingame_clients});
         io.sockets.emit("current_client", {clients});
     })
 });
