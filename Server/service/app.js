@@ -7,7 +7,6 @@ var app = express();
 
 var server = require("http").createServer(app);
 var io = require('socket.io')(server);
-var sockets;
 
 app.set('port', process.env.PORT || 8080);
 app.get('/', function(req, res){
