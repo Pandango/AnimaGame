@@ -150,7 +150,8 @@ io.on('connection', function (socket){
     })
 
     socket.on("update_game_turn", function(newGameTurn){
-        newGameTurn.turnNo += 1;
+        var turnNo = parseInt(newGameTurn.turnNo) + 1;
+        newGameTurn.turnNo = turnNo;
         gameTurnData = newGameTurn;
         io.sockets.emit("update_game_turn", {gameTurnData});
     });
