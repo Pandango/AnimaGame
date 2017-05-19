@@ -157,9 +157,9 @@ public class OnCreateGameController : MonoBehaviour {
 
             if (balancedPercent >= 200)
             {
-                balanceRatio = 1f;
+                remainBlanceRatio = 1f;
             }
-            _positivePopFoodBarImage.fillAmount = balanceRatio;
+            _positivePopFoodBarImage.fillAmount = remainBlanceRatio;
             _negativFoodBarImage.fillAmount = 0f;
         }
         else

@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class GameSocketHandler : MonoBehaviour {
     public SocketIOComponent socket;
+
     public delegate void OnUpdatePlayerInfo();
     private OnUpdatePlayerInfo callbackOnUpdatePlayerInfo;
 
@@ -27,6 +28,10 @@ public class GameSocketHandler : MonoBehaviour {
     public delegate void OnUpdateNewRound();
     private OnUpdateNewRound callbackOnUpdateNewRound;
 
+    void Awake()
+    {
+        socket = GameObject.Find("SocketIO").GetComponent<SocketIOComponent>();
+    }
 
     public void SendUpdateJoinGame(OnUpdatePlayerInfo callbackOnUpdatePlayerInfo)
     {

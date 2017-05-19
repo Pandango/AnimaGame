@@ -11,8 +11,6 @@ public class OnPlayerController : MonoBehaviour {
     private bool IsSocketConnected = false;
     public CardDataModel cardModel;
 
-    private bool isEnableTosetNextTurn= false;
-    private bool isRunTimer = false;
     private float _timeSecondCounter = 0;
 
     [Header("Player UI Info")]
@@ -39,14 +37,6 @@ public class OnPlayerController : MonoBehaviour {
         IntialiazSocket();
         gameSocketHandler.GetUpdateJoinGame(OnLoadPlayer);
         SetCardStarter();
-    }
-
-    void Update()
-    {
-        if (isRunTimer)
-        {
-            SetRunTimer();
-        } 
     }
 
     void OnLoadPlayer()
@@ -131,8 +121,8 @@ public class OnPlayerController : MonoBehaviour {
     {
         if (isTurned)
         {
-            ResetTimer();
             CurrentRoleTxt.text = "-";
+            SetStartTimerTxt();
 
             if (PlayerDataModel.IsFirstPlayerInNewRound && !PlayerDataModel.IsFirstTurn)
             {
@@ -140,7 +130,7 @@ public class OnPlayerController : MonoBehaviour {
             }
             else
             {
-                StartCoroutine("WaitBeforeStartTurn");
+                StartCoroutine("WaitBeforeStartTurn");    
             }         
         }
         else
@@ -149,7 +139,6 @@ public class OnPlayerController : MonoBehaviour {
 
             UsedCardBtn.gameObject.SetActive(false);
             EndTurnBtn.gameObject.SetActive(false);
-            isRunTimer = false;
         }
     }
 
@@ -165,10 +154,12 @@ public class OnPlayerController : MonoBehaviour {
         yield return new WaitForSeconds(2f);
 
         TurnNotifyDialog.SetActive(false);
-        isRunTimer = true;
+
         UsedCardBtn.gameObject.SetActive(true);
         EndTurnBtn.gameObject.SetActive(true);
         GetRandomUnitOfDrawingCard();
+
+        RunTimer(true);
         // tell cleint that this is your turn
     }
 
@@ -210,29 +201,42 @@ public class OnPlayerController : MonoBehaviour {
         PlayerScoreTxt.text = score.ToString();
     }
 
-    void SetRunTimer()
-    {
-        int maximunSecondPerTurn = Utilities.MaximumMiliSecondsPerTurn;
-        _timeSecondCounter += Time.deltaTime * 1000;
-
-        if (_timeSecondCounter <= Utilities.MaximumMiliSecondsPerTurn && _timeSecondCounter >= 0)
-        {          
-            TimerMiliTxt.text = Utilities.FormatTimer((int)(maximunSecondPerTurn - _timeSecondCounter), "mili");
-            TimerSecondsTxt.text = Utilities.FormatTimer((int)(maximunSecondPerTurn - _timeSecondCounter), "seconds");
-            isEnableTosetNextTurn = true;
+    void RunTimer(bool isRun) {
+        if (isRun)
+        {
+            StartCoroutine("Timer");
         }
         else
         {
-            SetDefaultTimerTxt();
+            EndTimer();
+        }      
+    }
 
-            if (isEnableTosetNextTurn)
-            {
-                SetToNextTurn();
-                isEnableTosetNextTurn = false;
-            }
-               
-            //send to server to set next turn
-        } 
+    void SetTimerTxt()
+    {
+        int maximunSecondPerTurn = Utilities.MaximumSecondsPerTurn;
+        TimerSecondsTxt.text = Utilities.FormatTimer((int)(maximunSecondPerTurn - _timeSecondCounter), "seconds");
+    }
+
+    IEnumerator Timer()
+    {
+        int maximunSecondPerTurn = Utilities.MaximumSecondsPerTurn;
+        bool isSecondsLimit = (_timeSecondCounter >= maximunSecondPerTurn);
+
+        if (isSecondsLimit)
+        {
+            EndTimer();
+            //SetToNextTurn();
+        }
+        else
+        {
+            yield return new WaitForSeconds(1f);
+
+            _timeSecondCounter += 1;
+
+            SetTimerTxt();
+            StartCoroutine("Timer");
+        }
     }
 
     public void SetToNextTurn()
@@ -240,12 +244,12 @@ public class OnPlayerController : MonoBehaviour {
         endBtnClickSound.Play();
         PlayerDataModel.IsFirstTurn = false;
 
+        RunTimer(false);
+
         int currentTurnNo = PlayerDataModel.gameCurrentTurnData.turnNo;
 
         if(currentTurnNo < PlayerDataModel.ClientUnit)
         {
-            SetDefaultTimerTxt();
-
             string nextPlayer = PlayerDataModel.ClientsInGameData[currentTurnNo].username;
             gameSocketHandler.SendReqGameTurnData(currentTurnNo, nextPlayer);
         }
@@ -298,16 +302,20 @@ public class OnPlayerController : MonoBehaviour {
         }
     }
 
-    void ResetTimer()
+    void EndTimer()
     {
-        SetDefaultTimerTxt();
-        _timeSecondCounter = 0;
-        isRunTimer = false;
+        StopCoroutine("Timer");
+        ResetTimer();
     }
 
-    void SetDefaultTimerTxt()
+    void ResetTimer()
     {
-        TimerMiliTxt.text = "000";
+        _timeSecondCounter = 0;
         TimerSecondsTxt.text = "00";
+    }
+
+    void SetStartTimerTxt()
+    {
+        TimerSecondsTxt.text = "30";
     }
 }

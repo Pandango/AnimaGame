@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -147,15 +148,22 @@ public class GameCalculatorService : MonoBehaviour {
 
     public void SendReqEventRandomAfterEndRound(string JsonObject)
     {
-        string url = hostUrl + "/endround";
+        try
+        {
+            string url = hostUrl + "/endround";
 
-        Dictionary<string, string> headers = new Dictionary<string, string>();
-        headers.Add("Content-Type", "application/json");
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            headers.Add("Content-Type", "application/json");
 
-        byte[] body = Encoding.UTF8.GetBytes(JsonObject);
+            byte[] body = Encoding.UTF8.GetBytes(JsonObject);
 
-        WWW www = new WWW(url, body, headers);
+            WWW www = new WWW(url, body, headers);
 
-        StartCoroutine(WaitForRequestEndRound(www));
+            StartCoroutine(WaitForRequestEndRound(www));
+        }catch(Exception e)
+        {
+
+        }
+  
     }
 }
