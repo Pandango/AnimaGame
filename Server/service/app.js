@@ -9,12 +9,16 @@ var server = require("http").createServer(app);
 var io = require('socket.io')(server);
 
 app.set('port', process.env.PORT || 8080);
-app.get('/', function(req, res){
-    res.sendfile(__dirname + '/index.html');
-});
+
+
+app.use(express.static(__dirname));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get('/', function(req, res){
+    res.sendfile(__dirname + '/index.html');
+});
 
 var calculateCardUsed = require('./CalculateGame');
 
@@ -166,6 +170,7 @@ io.on('connection', function (socket){
 
     socket.on("update_newround_resource", function(resource){
         var newResource = resource;
+        game_resource = resource;
         io.sockets.emit("update_newround_resource", newResource);
     });
 

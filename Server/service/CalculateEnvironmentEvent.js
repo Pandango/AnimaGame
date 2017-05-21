@@ -128,12 +128,16 @@ CalculateEnvironmentEvent.prototype.onTyphoon = function(){
 CalculateEnvironmentEvent.prototype.manageForestResource = function(resourceExpValue){
     if (resourceExpValue < 0){
         return 0;
+    }else{
+        return resourceExpValue;
     }
 };
 
 CalculateEnvironmentEvent.prototype.manageBuildingResource = function(resourceExpValue){
     if (resourceExpValue < 3){
         return 3;
+    }else{
+        return resourceExpValue
     }
 };
 
