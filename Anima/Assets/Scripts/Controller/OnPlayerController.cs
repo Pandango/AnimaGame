@@ -7,10 +7,12 @@ public class OnPlayerController : MonoBehaviour {
     public GameSocketHandler gameSocketHandler;
     public CardCollectionManager cardCollectionManager;
     public GameCalculatorService calculatorService;
+    public OnCreateGameController onCreateGameController;
 
     private bool IsSocketConnected = false;
     public CardDataModel cardModel;
 
+    private bool _isEventDisplayEnd = false;
     private float _timeSecondCounter = 0;
 
     [Header("Player UI Info")]
@@ -32,8 +34,11 @@ public class OnPlayerController : MonoBehaviour {
 
     [Header("Sound")]
     public AudioSource endBtnClickSound;
+
     void Start()
-    {  
+    {
+        onCreateGameController = this.gameObject.GetComponent<OnCreateGameController>();
+
         IntialiazSocket();
         gameSocketHandler.GetUpdateJoinGame(OnLoadPlayer);
         SetCardStarter();
@@ -126,6 +131,7 @@ public class OnPlayerController : MonoBehaviour {
 
             if (PlayerDataModel.IsFirstPlayerInNewRound && !PlayerDataModel.IsFirstTurn)
             {
+                StartNewRound();
                 StartCoroutine("WaitDialog");
             }
             else
@@ -144,8 +150,13 @@ public class OnPlayerController : MonoBehaviour {
 
     IEnumerator WaitDialog()
     {
-        yield return new WaitForSeconds(3f);
+        while (!_isEventDisplayEnd)
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
+        
         StartCoroutine("WaitBeforeStartTurn");
+        _isEventDisplayEnd = false;
     }
 
     IEnumerator WaitBeforeStartTurn()
@@ -160,6 +171,7 @@ public class OnPlayerController : MonoBehaviour {
         GetRandomUnitOfDrawingCard();
 
         RunTimer(true);
+
         // tell cleint that this is your turn
     }
 
@@ -186,8 +198,8 @@ public class OnPlayerController : MonoBehaviour {
                 gameSocketHandler.SendUpdateJoinGame(UpdatePlayerInfoUI);
 
                 gameSocketHandler.GetSortedPlayerRole();
-                gameSocketHandler.GetRandomEventAfterEndRound(DisplayEventAfterEventTurn);
-                gameSocketHandler.GetGameTurnData(UpdateGameTurn, UpdateEndTurnGameResource);            
+                gameSocketHandler.GetUpdateResoundAfterEndRound(DisplayEventPopupDialog);
+                gameSocketHandler.GetGameTurnData(UpdateGameTurn);            
             }
         }
     }
@@ -255,15 +267,23 @@ public class OnPlayerController : MonoBehaviour {
         }
         else
         {
-            StartNewRound();       
+            //cal end turn for last player
+            string jsonObj = JsonUtility.ToJson(Utilities.GenerateSendingGameResourceDataObj(), true);
+            calculatorService.SendReqCalEndRoundResource(jsonObj);
+
+            //after last player update new resource then cal for new round
+            //every new round will call event before 
+            // then sort player and start new round
+
+            // StartNewRound();       
         }         
     }
 
     void StartNewRound()
     {
         string jsonObj = JsonUtility.ToJson(Utilities.GenerateSendingGameResourceDataObj(), true);
-        calculatorService.SendReqEventRandomAfterEndRound(jsonObj);
-        gameSocketHandler.SendRequestSortedPlayerRole();   
+
+        calculatorService.SendReqCalNewRoundResource(jsonObj);
     }
 
     void DisplayEventPopupDialog()
@@ -283,12 +303,8 @@ public class OnPlayerController : MonoBehaviour {
         yield return new WaitForSeconds(1);
 
         EventAtStartRoundDialog.SetActive(false);
+        _isEventDisplayEnd = true;
     } 
-
-    void DisplayEventAfterEventTurn()
-    {
-        DisplayEventPopupDialog();
-    }
 
     bool IsAllPlayerJoiningGame()
     {

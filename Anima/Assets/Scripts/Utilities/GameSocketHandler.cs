@@ -13,14 +13,17 @@ public class GameSocketHandler : MonoBehaviour {
     public delegate void OnLoadPlayer();
     private OnLoadPlayer callbackOnLoadPlayer;
 
+    public delegate void OnUpdateResourceView();
+    private OnUpdateResourceView callbackUpdateResourceView;
+
     public delegate void OnUpdateGameResource();
     private OnUpdateGameResource callbackUpdateGameResourcer;
 
+    public delegate void OnUpdateGameResourceWhenUsedCard();
+    private OnUpdateGameResourceWhenUsedCard callbackOnUpdateGameResourceWhenUsedCard;
+
     public delegate void OnUpdateGameTurn();
     private OnUpdateGameTurn callbackOnUpdateGameTurn;
-
-    public delegate void OnUpdateEndGameTurnResource();
-    private OnUpdateEndGameTurnResource callbackOnUpdateEndGameTurnResource;
 
     public delegate void OnGameOver();
     private OnGameOver callbackOnGameOver;
@@ -113,11 +116,10 @@ public class GameSocketHandler : MonoBehaviour {
         socket.Emit("update_game_turn", new JSONObject(sendingGameTurnData));
     }
 
-    public void GetGameTurnData(OnUpdateGameTurn callbackOnUpdateGameTurnFunc, OnUpdateEndGameTurnResource callbackOnUpdateEndGameTurnResourceFunc)
+    public void GetGameTurnData(OnUpdateGameTurn callbackOnUpdateGameTurnFunc)
     {
         socket.On("update_game_turn", UpdateGameTurnData);
         //update new resource afgter end turn
-        callbackOnUpdateEndGameTurnResource = callbackOnUpdateEndGameTurnResourceFunc;
         callbackOnUpdateGameTurn = callbackOnUpdateGameTurnFunc;
     }
 
@@ -128,7 +130,6 @@ public class GameSocketHandler : MonoBehaviour {
         GameCurrentTurnData gameTurnData = JsonUtility.FromJson<GameCurrentTurnData>(gameTurnField);
         PlayerDataModel.gameCurrentTurnData = gameTurnData;
 
-        callbackOnUpdateEndGameTurnResource();
         callbackOnUpdateGameTurn();
     }
 
@@ -163,6 +164,7 @@ public class GameSocketHandler : MonoBehaviour {
         callbackUpdateGameResourcer();
     }
 
+    #region GameOverSocket
     public void SendReqGameOver()
     {
         Dictionary<string, string> sendingNewPlayerData = new Dictionary<string, string>();
@@ -171,6 +173,7 @@ public class GameSocketHandler : MonoBehaviour {
 
         socket.Emit("game_over", new JSONObject(sendingNewPlayerData));
     }
+    
 
     public void GetGameOver(OnGameOver callbackOnGameOverFunc)
     {
@@ -187,17 +190,18 @@ public class GameSocketHandler : MonoBehaviour {
         callbackOnGameOver();
 
     }
-
-    public void SendReqRandomEventAfterEndRound()
+    #endregion
+    public void SendReqUpdateResoundbeforeNewRound()
     {
         string sendingGameResource = JsonUtility.ToJson(GenerateSendingGameResourceAfterEndRoundObj());
         socket.Emit("update_newround_resource", new JSONObject (sendingGameResource));
     }
 
-    public void GetRandomEventAfterEndRound(OnUpdateNewRound callbackOnUpdateNewRoundFunc)
+    public void GetUpdateResoundAfterEndRound(OnUpdateNewRound callbackOnUpdateDisplayEventInNewRoundFunc)
     {
         socket.On("update_newround_resource", UpdateResourceAfterRoundEvent);
-        callbackOnUpdateNewRound = callbackOnUpdateNewRoundFunc;
+
+        callbackOnUpdateNewRound = callbackOnUpdateDisplayEventInNewRoundFunc;
     }
 
     void UpdateResourceAfterRoundEvent(SocketIOEvent evt)
@@ -207,7 +211,7 @@ public class GameSocketHandler : MonoBehaviour {
         JSONObject endRoundEvent = evt.data.GetField("gameEvent");
         PlayerDataModel.RoundEvent = endRoundEvent.str;
 
-        Debug.Log("handler" + endRoundEvent.str);
+        Debug.Log("handler" + updatedResource);
 
         JSONObject pfJson = evt.data.GetField("populationFoodBalanced");
         GameResourceDataModel.PopulationFood = JsonUtility.FromJson<PopulationFoodBalanced>(pfJson.ToString());
@@ -222,6 +226,7 @@ public class GameSocketHandler : MonoBehaviour {
         GameResourceDataModel.NaturalResources = JsonUtility.FromJson<NaturalResource>(naturalResourceJson.ToString());
 
         callbackOnUpdateNewRound();
+        callbackUpdateGameResourcer();
     }
 
     SendingGameResourceAfterEndRound GenerateSendingGameResourceAfterEndRoundObj()

@@ -7,11 +7,11 @@ public class OnBackToMenuController : MonoBehaviour {
 
     public void OnBackToMainMenu()
     {
-        SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
-
-        if(GameObject.Find("SocketIO") != null)
+        if (GameObject.Find("SocketIO") != null)
         {
             Destroy(GameObject.Find("SocketIO"));
         }
+
+        SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
     }
 }

@@ -8,10 +8,15 @@ public class GameCalculatorService : MonoBehaviour {
     private GameObject gameSocketHandlerObj;
     private GameSocketHandler gameSocketHandler;
 
-    public string hostUrl = "http://10.122.5.93:8080";
+    public bool isLocalHost;
+    public string hostUrl = "https://blooming-peak-86038.herokuapp.com";
 
     void Start()
     {
+        if (isLocalHost)
+        {
+            hostUrl = "http://127.0.0.1:8080";
+        }
         gameSocketHandlerObj = GameObject.Find("GameManager");
         gameSocketHandler = gameSocketHandlerObj.GetComponent<GameSocketHandler>();
     }
@@ -25,20 +30,7 @@ public class GameCalculatorService : MonoBehaviour {
             //update game resource to model
             Debug.Log("WWW " + www.data);
 
-            JSONObject updatedGameResourceJson = new JSONObject(www.text);
-
-            JSONObject pfJson = updatedGameResourceJson["populationFoodBalanced"];
-            GameResourceDataModel.PopulationFood = JsonUtility.FromJson<PopulationFoodBalanced>(pfJson.ToString());
-
-            JSONObject resourceJson = updatedGameResourceJson[ "sharingResource"];
-            GameResourceDataModel.SharingResources = JsonUtility.FromJson<SharingResource>(resourceJson.ToString());
-
-            JSONObject buildingResourceJson = updatedGameResourceJson["buildingResource"];
-            GameResourceDataModel.BuildingResouces = JsonUtility.FromJson<BuildingResource>(buildingResourceJson.ToString());
-
-            JSONObject naturalResourceJson = updatedGameResourceJson["naturalResource"];
-            GameResourceDataModel.NaturalResources = JsonUtility.FromJson<NaturalResource>(naturalResourceJson.ToString());
-
+            UpdateGameResource(www.text);
             gameSocketHandler.SendReqUpdatedGameResource();
         }
         else
@@ -71,20 +63,7 @@ public class GameCalculatorService : MonoBehaviour {
             //update game resource to model
             Debug.Log("WWW " + www.data);
 
-            JSONObject updatedGameResourceJson = new JSONObject(www.text);
-
-            JSONObject pfJson = updatedGameResourceJson["populationFoodBalanced"];
-            GameResourceDataModel.PopulationFood = JsonUtility.FromJson<PopulationFoodBalanced>(pfJson.ToString());
-
-            JSONObject resourceJson = updatedGameResourceJson["sharingResource"];
-            GameResourceDataModel.SharingResources = JsonUtility.FromJson<SharingResource>(resourceJson.ToString());
-
-            JSONObject buildingResourceJson = updatedGameResourceJson["buildingResource"];
-            GameResourceDataModel.BuildingResouces = JsonUtility.FromJson<BuildingResource>(buildingResourceJson.ToString());
-
-            JSONObject naturalResourceJson = updatedGameResourceJson["naturalResource"];
-            GameResourceDataModel.NaturalResources = JsonUtility.FromJson<NaturalResource>(naturalResourceJson.ToString());
-
+            UpdateGameResource(www.text);
             gameSocketHandler.SendReqUpdatedGameResource();
         }
         else
@@ -109,14 +88,14 @@ public class GameCalculatorService : MonoBehaviour {
     }
 
 
-    IEnumerator WaitForRequestEndRound(WWW www)
+    IEnumerator WaitForRequestNewRound(WWW www)
     {
         yield return www;
 
         if (www.error == null)
         {
             //update game resource to model
-            Debug.Log("WWW EndRound" + www.data);
+            Debug.Log("WWW NewRound" + www.data);
 
             JSONObject updatedGameResourceInRoundJson = new JSONObject(www.text);
 
@@ -125,19 +104,9 @@ public class GameCalculatorService : MonoBehaviour {
 
             Debug.Log(endRoundEvent.str);
 
-            JSONObject pfJson = updatedGameResourceInRoundJson["populationFoodBalanced"];
-            GameResourceDataModel.PopulationFood = JsonUtility.FromJson<PopulationFoodBalanced>(pfJson.ToString());
+            UpdateGameResource(www.text);
 
-            JSONObject resourceJson = updatedGameResourceInRoundJson["sharingResource"];
-            GameResourceDataModel.SharingResources = JsonUtility.FromJson<SharingResource>(resourceJson.ToString());
-
-            JSONObject buildingResourceJson = updatedGameResourceInRoundJson["buildingResource"];
-            GameResourceDataModel.BuildingResouces = JsonUtility.FromJson<BuildingResource>(buildingResourceJson.ToString());
-
-            JSONObject naturalResourceJson = updatedGameResourceInRoundJson["naturalResource"];
-            GameResourceDataModel.NaturalResources = JsonUtility.FromJson<NaturalResource>(naturalResourceJson.ToString());
-
-            gameSocketHandler.SendReqRandomEventAfterEndRound();
+            gameSocketHandler.SendReqUpdateResoundbeforeNewRound();
         }
         else
         {
@@ -146,24 +115,69 @@ public class GameCalculatorService : MonoBehaviour {
 
     }
 
-    public void SendReqEventRandomAfterEndRound(string JsonObject)
+    public void SendReqCalNewRoundResource(string JsonObject)
     {
-        try
+        string url = hostUrl + "/endround";
+
+        Dictionary<string, string> headers = new Dictionary<string, string>();
+        headers.Add("Content-Type", "application/json");
+
+        byte[] body = Encoding.UTF8.GetBytes(JsonObject);
+
+        WWW www = new WWW(url, body, headers);
+
+        StartCoroutine(WaitForRequestNewRound(www));
+    }
+
+    IEnumerator WaitForRequestEndRound(WWW www)
+    {
+        yield return www;
+
+        if (www.error == null)
         {
-            string url = hostUrl + "/endround";
+            //update game resource to model
+            Debug.Log("WWW " + www.data);
 
-            Dictionary<string, string> headers = new Dictionary<string, string>();
-            headers.Add("Content-Type", "application/json");
+            UpdateGameResource(www.text);
 
-            byte[] body = Encoding.UTF8.GetBytes(JsonObject);
-
-            WWW www = new WWW(url, body, headers);
-
-            StartCoroutine(WaitForRequestEndRound(www));
-        }catch(Exception e)
-        {
-
+            gameSocketHandler.SendReqUpdatedGameResource();
+            gameSocketHandler.SendRequestSortedPlayerRole();
         }
-  
+        else
+        {
+            Debug.Log("WWW Error:" + www.error.ToString());
+        }
+    }
+
+    public void SendReqCalEndRoundResource(string JsonObject)
+    {
+        string url = hostUrl + "/endturn";
+
+        Dictionary<string, string> headers = new Dictionary<string, string>();
+        headers.Add("Content-Type", "application/json");
+
+        byte[] body = Encoding.UTF8.GetBytes(JsonObject);
+
+        WWW www = new WWW(url, body, headers);
+
+        StartCoroutine(WaitForRequestEndRound(www));
+    }
+
+    void UpdateGameResource(string JsonString)
+    {
+        JSONObject updatedGameResourceJson = new JSONObject(JsonString);
+
+        JSONObject pfJson = updatedGameResourceJson["populationFoodBalanced"];
+        GameResourceDataModel.PopulationFood = JsonUtility.FromJson<PopulationFoodBalanced>(pfJson.ToString());
+
+        JSONObject resourceJson = updatedGameResourceJson["sharingResource"];
+        GameResourceDataModel.SharingResources = JsonUtility.FromJson<SharingResource>(resourceJson.ToString());
+
+        JSONObject buildingResourceJson = updatedGameResourceJson["buildingResource"];
+        GameResourceDataModel.BuildingResouces = JsonUtility.FromJson<BuildingResource>(buildingResourceJson.ToString());
+
+        JSONObject naturalResourceJson = updatedGameResourceJson["naturalResource"];
+        GameResourceDataModel.NaturalResources = JsonUtility.FromJson<NaturalResource>(naturalResourceJson.ToString());
+
     }
 }

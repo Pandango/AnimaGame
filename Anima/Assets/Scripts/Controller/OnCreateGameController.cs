@@ -41,6 +41,7 @@ public class OnCreateGameController : MonoBehaviour {
     private OnWaterUpgradeController _waterController;
 
     [Header("Sound")]
+    public AudioSource UpdatedResourceSound;
     public AudioSource bgmSound;
 
     void Start () {
@@ -65,7 +66,7 @@ public class OnCreateGameController : MonoBehaviour {
 
     void IntializeSocket()
     {       
-        gameSocketHandler.GetUpdatedGameResource(UpdateGameResource);
+        gameSocketHandler.GetUpdatedGameResource(UpdateGameResourceWhenUsedCard);
         gameSocketHandler.GetGameOver(OnLoadGameOverScene);
     }
 
@@ -95,6 +96,16 @@ public class OnCreateGameController : MonoBehaviour {
         string gameObjectiveDescription = Utilities.GenerateGameObjectiveDescription(currentGameobjectiveKey);
 
         GameObjectiveTxt.text = gameObjectiveDescription;
+    }
+
+    public void UpdateGameResourceWhenUsedCard()
+    {
+        bool isYourTurn = (PlayerDataModel.PlayerInGameData.username == PlayerDataModel.gameCurrentTurnData.playerNameInCurrentTurn);
+        if (!isYourTurn)
+        {
+            UpdatedResourceSound.Play();
+        }
+        UpdateGameResource();
     }
 
     public void UpdateGameResource()
