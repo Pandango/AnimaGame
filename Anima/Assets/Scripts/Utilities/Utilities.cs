@@ -47,16 +47,9 @@ public class Utilities : MonoBehaviour {
     public static string FormatTimer(int timeLeft, string type)
     {
         System.TimeSpan time = System.TimeSpan.FromSeconds(timeLeft);
-        //string formatMili = string.Format("{0:000}",time.Milliseconds);
+
         string formatSecond = string.Format("{0:00}", time.Seconds);
-        //if (type == "mili")
-        //{
-        //    return formatmili;
-        //}
-        //else
-        //{
-            return formatSecond;
-        //}    
+        return formatSecond;   
     }
 
     public static string GenerateGameObjectiveDescription(string gameObjectiveKey)

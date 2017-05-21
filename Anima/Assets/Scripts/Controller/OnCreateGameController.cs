@@ -46,7 +46,7 @@ public class OnCreateGameController : MonoBehaviour {
 
     void Start () {
         bgmSound.Play();
-        //MockUpResource();
+
         _woodCutterController = buildingGameObj[0].GetComponent<OnBuildingUpgradeController>();
         _mineController = buildingGameObj[1].GetComponent<OnBuildingUpgradeController>();
         _farmController = buildingGameObj[2].GetComponent<OnBuildingUpgradeController>();

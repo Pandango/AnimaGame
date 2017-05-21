@@ -13,14 +13,8 @@ public class GameSocketHandler : MonoBehaviour {
     public delegate void OnLoadPlayer();
     private OnLoadPlayer callbackOnLoadPlayer;
 
-    public delegate void OnUpdateResourceView();
-    private OnUpdateResourceView callbackUpdateResourceView;
-
     public delegate void OnUpdateGameResource();
     private OnUpdateGameResource callbackUpdateGameResourcer;
-
-    public delegate void OnUpdateGameResourceWhenUsedCard();
-    private OnUpdateGameResourceWhenUsedCard callbackOnUpdateGameResourceWhenUsedCard;
 
     public delegate void OnUpdateGameTurn();
     private OnUpdateGameTurn callbackOnUpdateGameTurn;
@@ -91,8 +85,6 @@ public class GameSocketHandler : MonoBehaviour {
     public void GetSortedPlayerRole()
     {
         socket.On("sorted_players", UpdateClientsData);
-        
-        //check this turn is player's turn
     }
 
     void UpdateClientsData(SocketIOEvent evt)
@@ -103,8 +95,6 @@ public class GameSocketHandler : MonoBehaviour {
         PlayerInGameData[] clientsInGameData = JsonHelper.FromJson<PlayerInGameData>(serviceData);
         PlayerDataModel.ClientsInGameData = clientsInGameData;
         print("CurrentPlayers Role:" + serviceData);
-
-        //ending loading about new turn
     }
 
     public void SendReqGameTurnData(int turnNo, string nextPlayer)
@@ -149,18 +139,7 @@ public class GameSocketHandler : MonoBehaviour {
     {
         Debug.Log("Update Game Res" + evt.data.ToString());
 
-        JSONObject pfJson = evt.data.GetField("populationFoodBalanced");
-        GameResourceDataModel.PopulationFood = JsonUtility.FromJson<PopulationFoodBalanced>(pfJson.ToString());
-
-        JSONObject resourceJson = evt.data.GetField("sharingResource");
-        GameResourceDataModel.SharingResources = JsonUtility.FromJson<SharingResource>(resourceJson.ToString());
-
-        JSONObject buildingResourceJson = evt.data.GetField("buildingResource");
-        GameResourceDataModel.BuildingResouces = JsonUtility.FromJson<BuildingResource>(buildingResourceJson.ToString());
-
-        JSONObject naturalResourceJson = evt.data.GetField("naturalResource");
-        GameResourceDataModel.NaturalResources = JsonUtility.FromJson<NaturalResource>(naturalResourceJson.ToString());
-
+        UpdateGameResource(evt.data);
         callbackUpdateGameResourcer();
     }
 
@@ -213,17 +192,7 @@ public class GameSocketHandler : MonoBehaviour {
 
         Debug.Log("handler" + updatedResource);
 
-        JSONObject pfJson = evt.data.GetField("populationFoodBalanced");
-        GameResourceDataModel.PopulationFood = JsonUtility.FromJson<PopulationFoodBalanced>(pfJson.ToString());
-
-        JSONObject resourceJson = evt.data.GetField("sharingResource");
-        GameResourceDataModel.SharingResources = JsonUtility.FromJson<SharingResource>(resourceJson.ToString());
-
-        JSONObject buildingResourceJson = evt.data.GetField("buildingResource");
-        GameResourceDataModel.BuildingResouces = JsonUtility.FromJson<BuildingResource>(buildingResourceJson.ToString());
-
-        JSONObject naturalResourceJson = evt.data.GetField("naturalResource");
-        GameResourceDataModel.NaturalResources = JsonUtility.FromJson<NaturalResource>(naturalResourceJson.ToString());
+        UpdateGameResource(evt.data);
 
         callbackOnUpdateNewRound();
         callbackUpdateGameResourcer();
@@ -238,6 +207,21 @@ public class GameSocketHandler : MonoBehaviour {
         sendingGameRes.buildingResource = GameResourceDataModel.BuildingResouces;
         sendingGameRes.naturalResource = GameResourceDataModel.NaturalResources;
         return sendingGameRes;
+    }
+
+    void UpdateGameResource(JSONObject gameResourceJsonString)
+    {
+        JSONObject pfJson = gameResourceJsonString.GetField("populationFoodBalanced");
+        GameResourceDataModel.PopulationFood = JsonUtility.FromJson<PopulationFoodBalanced>(pfJson.ToString());
+
+        JSONObject resourceJson = gameResourceJsonString.GetField("sharingResource");
+        GameResourceDataModel.SharingResources = JsonUtility.FromJson<SharingResource>(resourceJson.ToString());
+
+        JSONObject buildingResourceJson = gameResourceJsonString.GetField("buildingResource");
+        GameResourceDataModel.BuildingResouces = JsonUtility.FromJson<BuildingResource>(buildingResourceJson.ToString());
+
+        JSONObject naturalResourceJson = gameResourceJsonString.GetField("naturalResource");
+        GameResourceDataModel.NaturalResources = JsonUtility.FromJson<NaturalResource>(naturalResourceJson.ToString());
     }
 }
 

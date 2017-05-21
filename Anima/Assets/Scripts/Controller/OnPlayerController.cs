@@ -269,13 +269,7 @@ public class OnPlayerController : MonoBehaviour {
         {
             //cal end turn for last player
             string jsonObj = JsonUtility.ToJson(Utilities.GenerateSendingGameResourceDataObj(), true);
-            calculatorService.SendReqCalEndRoundResource(jsonObj);
-
-            //after last player update new resource then cal for new round
-            //every new round will call event before 
-            // then sort player and start new round
-
-            // StartNewRound();       
+            calculatorService.SendReqCalEndRoundResource(jsonObj);      
         }         
     }
 

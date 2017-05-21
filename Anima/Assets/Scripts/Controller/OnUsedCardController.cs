@@ -16,7 +16,6 @@ public class OnUsedCardController : MonoBehaviour {
     {
         _onPlayerControllerObj = GameObject.Find("GameManager");
         _onPlayerController = _onPlayerControllerObj.GetComponent<OnPlayerController>();
-
     }
 
     public void OnUsedCard()
@@ -35,7 +34,6 @@ public class OnUsedCardController : MonoBehaviour {
                     UpdatedResourceSound.Play();
                     CalResourceAfterUsed();
 
-                    //reset selectedcard;
                     cards[index].GetComponent<OnSelectCardController>().SetDefaultOtherCards();
                     _onPlayerController.DeleteCard(cards[index]);
 
