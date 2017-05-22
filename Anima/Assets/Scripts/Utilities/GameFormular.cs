@@ -22,14 +22,14 @@ public class GameFormular : MonoBehaviour {
         return RemainEXP;
     }
 
-    public static int ForestCardWoodUsage(int level)
+    public static int FarmCardWoodUsage(int level)
     {
         return 100 + (100 * level);
     }
 
-    public static int ForestCardStoneUsage(int level)
+    public static int FarmtCardStoneUsage(int level)
     {
-        return 50 + (50 * level);
+        return 100 + (100 * level);
     }
 
     public static int WoodCutterCardStoneUsage(int level)
@@ -44,7 +44,7 @@ public class GameFormular : MonoBehaviour {
 
     public static int TownCardWoodUsage(int level)
     {
-        return 50 + (50 * level);
+        return 100 + (100 * level);
     }
 
     public static int TownCardStoneUsage(int level)

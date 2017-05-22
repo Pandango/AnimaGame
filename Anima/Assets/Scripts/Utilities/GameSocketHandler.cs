@@ -197,7 +197,7 @@ public class GameSocketHandler : MonoBehaviour {
         callbackOnUpdateNewRound();
         callbackUpdateGameResourcer();
     }
-
+    #region Helper
     SendingGameResourceAfterEndRound GenerateSendingGameResourceAfterEndRoundObj()
     {
         SendingGameResourceAfterEndRound sendingGameRes = new SendingGameResourceAfterEndRound();
@@ -223,6 +223,7 @@ public class GameSocketHandler : MonoBehaviour {
         JSONObject naturalResourceJson = gameResourceJsonString.GetField("naturalResource");
         GameResourceDataModel.NaturalResources = JsonUtility.FromJson<NaturalResource>(naturalResourceJson.ToString());
     }
+    #endregion
 }
 
 [Serializable]

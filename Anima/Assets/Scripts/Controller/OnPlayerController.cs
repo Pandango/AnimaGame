@@ -238,7 +238,7 @@ public class OnPlayerController : MonoBehaviour {
         if (isSecondsLimit)
         {
             EndTimer();
-            //SetToNextTurn();
+            SetToNextTurn();
         }
         else
         {

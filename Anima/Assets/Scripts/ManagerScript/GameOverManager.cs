@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class GameOverManager : MonoBehaviour {
+   
     public Text ObjectiveResultTxt;
     public Text MissionResultTxt;
 
@@ -32,6 +33,7 @@ public class GameOverManager : MonoBehaviour {
         {
             SetUIAsMissionFailed();
         }
+        
     }
 
     void SetUIAsMissionComplete()

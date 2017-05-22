@@ -27,7 +27,7 @@ public class OnUsedCardController : MonoBehaviour {
         {
             if (cards[index].GetComponent<OnSelectCardController>().IsSelected)
             {
-                bool isUsable = IsResourceEnough(cards[index]) && IsNaturalResourceEnough() && IsBuildingNotLevelMax();
+                bool isUsable = (IsResourceEnough(cards[index]) && IsNaturalResourceEnough()) && IsBuildingNotLevelMax();
                 if (isUsable)
                 {
                     BtnClickSound.Play();
@@ -190,6 +190,7 @@ public class OnUsedCardController : MonoBehaviour {
         sendUsageGameData.getBuildingExp.mineGetExp = 1;
         sendUsageGameData.getNaturalExp.waterGetExp = -1;
         sendUsageGameData.getResource.woodUnit = CardDataModel.MineCardModel.woodUsage * -1;
+        sendUsageGameData.getResource.stoneUnit = CardDataModel.MineCardModel.stoneUsage * -1;
         return sendUsageGameData;
     }
 
@@ -199,6 +200,7 @@ public class OnUsedCardController : MonoBehaviour {
         sendUsageGameData.getBuildingExp.woodCutterGetExp = 1;
         sendUsageGameData.getNaturalExp.forestGetExp = -1;
         sendUsageGameData.getResource.stoneUnit = CardDataModel.WoodCutterCardModel.stoneUsage * -1;
+        sendUsageGameData.getResource.woodUnit = CardDataModel.WoodCutterCardModel.woodUsage * -1;
         return sendUsageGameData;
     }
 
@@ -215,6 +217,8 @@ public class OnUsedCardController : MonoBehaviour {
     SendUsagedGameData GenerateSendRainCardData()
     {
         SendUsagedGameData sendUsageGameData = new SendUsagedGameData();
+        sendUsageGameData.getResource.woodUnit = CardDataModel.WaterCardModel.woodUsage;
+        sendUsageGameData.getResource.stoneUnit = CardDataModel.WaterCardModel.stoneUsage;
         sendUsageGameData.getNaturalExp.waterGetExp = 2;
         return sendUsageGameData;
     }
@@ -222,6 +226,8 @@ public class OnUsedCardController : MonoBehaviour {
     SendUsagedGameData GenerateSendTreeCardData()
     {
         SendUsagedGameData sendUsageGameData = new SendUsagedGameData();
+        sendUsageGameData.getResource.woodUnit = CardDataModel.ForestCardModel.woodUsage;
+        sendUsageGameData.getResource.stoneUnit = CardDataModel.ForestCardModel.stoneUsage;
         sendUsageGameData.getNaturalExp.waterGetExp = -1;
         sendUsageGameData.getNaturalExp.forestGetExp = 1;
         return sendUsageGameData;

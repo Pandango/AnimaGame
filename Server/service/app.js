@@ -56,7 +56,7 @@ var isGameStart = false;
 io.on('connection', function (socket){
     
     socket.on("login", function(data){
-        if(clients.length < 4 && isGameStart === false){
+        if(clients.length <= 4 && isGameStart === false){
             currentUser = {
                 'username' : data.username,
                 'state': data.state
@@ -95,8 +95,8 @@ io.on('connection', function (socket){
                 'food' : 80
             },
             'sharingResource' : {
-                'wood' : 1000,
-                'stone': 1000
+                'wood' : 500,
+                'stone': 500
             },
             'buildingResource' : {
                 'woodCutterExp': 3,

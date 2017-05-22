@@ -25,8 +25,8 @@ public class CardDataModel : MonoBehaviour {
         get
         {
             int farmLevel = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.farmExp);
-            _farmCard.woodUsage = GameFormular.ForestCardWoodUsage(farmLevel);
-            _farmCard.stoneUsage = GameFormular.ForestCardStoneUsage(farmLevel);
+            _farmCard.woodUsage = GameFormular.FarmCardWoodUsage(farmLevel);
+            _farmCard.stoneUsage = GameFormular.FarmtCardStoneUsage(farmLevel);
 
             return _farmCard;
         }
@@ -68,6 +68,30 @@ public class CardDataModel : MonoBehaviour {
             _townCard.stoneUsage = GameFormular.TownCardStoneUsage(townLevel);
 
             return _townCard;
+        }
+    }
+
+    private static UsageResource _forestCard = new UsageResource();
+    public static UsageResource ForestCardModel
+    {
+        get
+        {
+            _forestCard.woodUsage = 0;
+            _forestCard.stoneUsage = 0;
+
+            return _forestCard;
+        }
+    }
+
+    private static UsageResource _waterCard = new UsageResource();
+    public static UsageResource WaterCardModel
+    {
+        get
+        {
+            _waterCard.woodUsage = 0;
+            _waterCard.stoneUsage = 0;
+
+            return _waterCard;
         }
     }
 }
