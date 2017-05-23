@@ -46,8 +46,9 @@ public class OnPlayerController : MonoBehaviour {
 
     void OnLoadPlayer()
     { 
-        if (IsAllPlayerJoiningGame())
+        if (IsAllPlayerJoiningGame() && IsLastPlayer())
         {
+            //เอาแค่คนเดียวยิงไปบอก ว่า ให้ sort 
             print("All Player Ready");
             gameSocketHandler.SendRequestSortedPlayerRole();
         }
@@ -127,7 +128,6 @@ public class OnPlayerController : MonoBehaviour {
         if (isTurned)
         {
             CurrentRoleTxt.text = "-";
-            SetStartTimerTxt();
 
             if (PlayerDataModel.IsFirstPlayerInNewRound && !PlayerDataModel.IsFirstTurn)
             {
@@ -136,8 +136,8 @@ public class OnPlayerController : MonoBehaviour {
             }
             else
             {
-                StartCoroutine("WaitBeforeStartTurn");    
-            }         
+                StartCoroutine("WaitBeforeStartTurn");
+            }    
         }
         else
         {
@@ -161,6 +161,8 @@ public class OnPlayerController : MonoBehaviour {
 
     IEnumerator WaitBeforeStartTurn()
     {
+        RunTimer(false);
+
         TurnNotifyDialog.SetActive(true);
         yield return new WaitForSeconds(2f);
 
@@ -216,6 +218,7 @@ public class OnPlayerController : MonoBehaviour {
     void RunTimer(bool isRun) {
         if (isRun)
         {
+            SetStartTimerTxt();
             StartCoroutine("Timer");
         }
         else
@@ -303,6 +306,21 @@ public class OnPlayerController : MonoBehaviour {
     bool IsAllPlayerJoiningGame()
     {
         if (LoginDataModel.ClientsUnit == PlayerDataModel.ClientUnit)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool IsLastPlayer()
+    {
+        int clientsUnit = LoginDataModel.ClientsUnit;
+        string lastJoiningPlayerName = LoginDataModel.ClientsInfo[clientsUnit - 1].username;
+
+        if(PlayerDataModel.PlayerInGameData.username == lastJoiningPlayerName)
         {
             return true;
         }
