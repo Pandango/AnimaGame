@@ -11,6 +11,7 @@ public class OnUsedCardController : MonoBehaviour {
     [Header("Sound")]
     public AudioSource BtnClickSound;
     public AudioSource UpdatedResourceSound;
+    public AudioSource UnClickableSound;
 
     void Start()
     {
@@ -40,7 +41,7 @@ public class OnUsedCardController : MonoBehaviour {
                 }
                 else
                 {
-                    //tell player resource not enough or playsound
+                    UnClickableSound.Play();
                 }
             }
         }
