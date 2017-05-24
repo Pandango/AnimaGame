@@ -19,6 +19,7 @@ public class GameOverManager : MonoBehaviour {
 
     public AudioSource bgmSoundMissionConplete;
     public AudioSource bgmMissionFailed;
+    public AudioSource bgmMissionComplete;
 
     void Start()
     {
@@ -41,6 +42,8 @@ public class GameOverManager : MonoBehaviour {
         DefaultBG.SetActive(true);
         DesolateBG.SetActive(false);
 
+        bgmMissionComplete.Play();
+
         DescriptionTxt.text = GameOverModel.description;
         ResultSymbol.sprite = ResultSymbolSpriteModel[0];
         ObjectiveResultTxt.text = "Objective Complete.";
@@ -52,6 +55,8 @@ public class GameOverManager : MonoBehaviour {
     {
         DefaultBG.SetActive(false);
         DesolateBG.SetActive(true);
+
+        bgmMissionFailed.Play();
 
         DescriptionTxt.text = GameOverModel.description;
         ResultSymbol.sprite = ResultSymbolSpriteModel[1];

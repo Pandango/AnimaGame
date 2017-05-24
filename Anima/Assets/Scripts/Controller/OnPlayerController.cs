@@ -8,6 +8,7 @@ public class OnPlayerController : MonoBehaviour {
     public CardCollectionManager cardCollectionManager;
     public GameCalculatorService calculatorService;
     public OnCreateGameController onCreateGameController;
+    public EventSoundDataModel eventSoundModel;
 
     private bool IsSocketConnected = false;
     public CardDataModel cardModel;
@@ -34,7 +35,7 @@ public class OnPlayerController : MonoBehaviour {
 
     [Header("Sound")]
     public AudioSource endBtnClickSound;
-
+    
     void Start()
     {
         onCreateGameController = this.gameObject.GetComponent<OnCreateGameController>();
@@ -284,12 +285,13 @@ public class OnPlayerController : MonoBehaviour {
     }
 
     void DisplayEventPopupDialog()
-    {
+    {    
         StartCoroutine("DisplayEventDialog");
     }
 
     IEnumerator DisplayEventDialog()
     {
+        CheckEventSoundUsage(PlayerDataModel.RoundEvent);
         EventAtStartRoundDialog.SetActive(true);
         string EventKeyName = PlayerDataModel.RoundEvent; 
         DialogHeader.text = EventDataModel.EventHeaderList[EventKeyName];
@@ -302,6 +304,13 @@ public class OnPlayerController : MonoBehaviour {
         EventAtStartRoundDialog.SetActive(false);
         _isEventDisplayEnd = true;
     } 
+
+    void CheckEventSoundUsage(string eventName)
+    {
+        AudioSource selectedEventSound;
+        selectedEventSound = eventSoundModel.getEventSound(eventName);
+        selectedEventSound.Play();
+    }
 
     bool IsAllPlayerJoiningGame()
     {
