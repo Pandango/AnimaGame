@@ -36,7 +36,17 @@ public class Utilities : MonoBehaviour {
 
     public static int RandomCard()
     {
-        int random = UnityEngine.Random.Range(0, CardDataModel.CardObjectMaxUnit);
+        int random = 0;
+        int percent = UnityEngine.Random.Range(1, 5);
+        if (percent >= 1 && percent <= 2)
+        {
+            random = UnityEngine.Random.Range(0, 2);
+        }
+        else
+        {
+            random = UnityEngine.Random.Range(2, CardDataModel.CardObjectMaxUnit);
+        }
+
         return random;
     }
 
