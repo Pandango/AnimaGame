@@ -15,6 +15,7 @@ public class OnCreateGameController : MonoBehaviour {
     public Text GameSubObjectiveTxt;
     public Text PopulationObjectTxt;
     public GameObject CloseButton;
+    public GameObject loadingTxt;
 
     [Header("GameObjective Checker")]
     public GameObject MainObjectiveChecker;
@@ -156,12 +157,13 @@ public class OnCreateGameController : MonoBehaviour {
 
     IEnumerator WaitObjectiveDialogDuration()
     {
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(8f);
         ResetObjectiveDialog();
     }
 
     void ResetObjectiveDialog()
     {
+        loadingTxt.SetActive(false);
         isGameObjectiveDialogVisible = true;
         CloseButton.SetActive(true);
         ObjectivePanel.GetComponent<Image>().color = new Color32(255, 255, 225, 0);
