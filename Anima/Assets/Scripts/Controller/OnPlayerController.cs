@@ -301,10 +301,10 @@ public class OnPlayerController : MonoBehaviour {
         string EventKeyName = PlayerDataModel.RoundEvent; 
         DialogHeader.text = EventDataModel.EventHeaderList[EventKeyName];
         DialogDescription.text = EventDataModel.EventDescriptionList[EventKeyName];
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(3f);
 
         DialogDescription.text = EventDataModel.EventDescriptionEffectList[EventKeyName];
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(3f);
 
         EventAtStartRoundDialog.SetActive(false);
         _isEventDisplayEnd = true;

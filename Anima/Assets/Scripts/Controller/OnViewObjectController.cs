@@ -5,9 +5,11 @@ using UnityEngine;
 public class OnViewObjectController : MonoBehaviour {
     public GameObject GameObjectiveDialog;
     bool isGameObjectiveDialogVisible = false;
+    public AudioSource ClickSound;
 
     public void OnDisplayGameObjective()
     {
+        ClickSound.Play();
         if (isGameObjectiveDialogVisible)
         {
             GameObjectiveDialog.SetActive(false);
