@@ -51,10 +51,12 @@ public class LobbySocketHandler : MonoBehaviour {
         LoginDataModel.PlayerProfile.state = state;
     }
 
-    public void SendCreateGame(string gameObjective)
+    public void SendCreateGame(string gameObjective, string gameSubObjective, int requirePopulation)
     {
         Dictionary<string, string> gameObjectiveDic = new Dictionary<string, string>();
         gameObjectiveDic["gameObjective"] = gameObjective;
+        gameObjectiveDic["gameSubObjective"] = gameSubObjective;
+        gameObjectiveDic["populationObjective"] = requirePopulation.ToString();
 
         socket.Emit("create_game", new JSONObject(gameObjectiveDic));
     }
@@ -67,9 +69,14 @@ public class LobbySocketHandler : MonoBehaviour {
     void UpdatedGameObjective(SocketIOEvent evt)
     {
         string gameObjectJson = evt.data.GetField("gameObjective").str;
+        string subObjectiveJson = evt.data.GetField("gameSubObjective").str;
+        int populationObjectiveJson = int.Parse(evt.data.GetField("populationObjective").str);
 
-        Debug.Log("gameObjective : " + gameObjectJson.ToString());
+        Debug.Log("gameObjective : " + evt.data.ToString());
+
         GameObjectiveDataModel.CurrentGameObjective = gameObjectJson;
+        GameObjectiveDataModel.CurrentSubGameObjetive = subObjectiveJson;
+        GameObjectiveDataModel.CurrentPopulationObjective = populationObjectiveJson;
     }
 
     public void GetCreateGame(OnLoadNewGameScene onLoadNewGameScene)

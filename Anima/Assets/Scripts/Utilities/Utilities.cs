@@ -7,6 +7,8 @@ public class Utilities : MonoBehaviour {
 
     public static int MaximumSecondsPerTurn = 30;
     public static int MaximumAllowLevel = 4;
+    public static int RequireSubObjectiveLevel = 2;
+    public static int GamePopulationObjective = 2000;
 
     public static int StartCardUnit
     {
@@ -38,10 +40,29 @@ public class Utilities : MonoBehaviour {
         return random;
     }
 
-    public static int RandomEventAfterEndTurn()
+    public static int RandomGameObjective()
     {
         int randonEvent = UnityEngine.Random.Range(0, GameObjectiveDataModel.GameObjectiveTypeUnit);
         return randonEvent;
+    }
+
+    public static int RandomGameSubObjective(int usedGameObjectiveId)
+    {
+        int randomEvent = 0;
+        bool isUsaged = true;
+
+        while (isUsaged)
+        {
+            randomEvent = UnityEngine.Random.Range(0, GameObjectiveDataModel.GameObjectiveTypeUnit);
+            isUsaged = (randomEvent == usedGameObjectiveId);
+        }
+        return randomEvent;
+    }
+
+    public static int PopulationObjective()
+    {
+        int requirePopulation = GamePopulationObjective;
+        return requirePopulation;
     }
 
     public static string FormatTimer(int timeLeft, string type)
@@ -55,6 +76,18 @@ public class Utilities : MonoBehaviour {
     public static string GenerateGameObjectiveDescription(string gameObjectiveKey)
     {
         string description = GameObjectiveDataModel.GameObjeciveDescription[gameObjectiveKey];        
+        return description;
+    }
+
+    public static string GenerateSubObjectiveDescription(string gameObjectiveKey)
+    {
+        string description = GameObjectiveDataModel.GameSubObjeciveDescription[gameObjectiveKey];
+        return description;
+    }
+
+    public static string GeneratePopulationObjectiveDescription(int populationUnit)
+    {
+        string description = "Get " + populationUnit.ToString() + " population";
         return description;
     }
 

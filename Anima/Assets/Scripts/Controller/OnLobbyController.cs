@@ -52,15 +52,26 @@ public class OnLobbyController : MonoBehaviour {
     {
         BtnClickSound.Play();
 
-        string randomedObjective = RandomGameObjective();
-        lobbySocketHandler.SendCreateGame(randomedObjective);  
+        int randomIndex = Utilities.RandomGameObjective();
+
+        string randomObjective = RandomGameObjective(randomIndex);
+        string randomSubObjective = RandomSubObjective(randomIndex);
+        int requirePopulation = Utilities.PopulationObjective();
+
+        lobbySocketHandler.SendCreateGame(randomObjective, randomSubObjective, requirePopulation);  
     }
 
-    string RandomGameObjective()
+    string RandomGameObjective(int randomIndex)
     {
-        int randomIndex = Utilities.RandomEventAfterEndTurn();
         string selectedObjective = GameObjectiveDataModel.GameObjectiveList[randomIndex];
         return selectedObjective;
+    }
+
+    string RandomSubObjective(int usageObjectiveId)
+    {
+        int subObjectIndex = Utilities.RandomGameSubObjective(usageObjectiveId);
+        string selectedSubObjective = GameObjectiveDataModel.GameObjectiveList[subObjectIndex];
+        return selectedSubObjective;
     }
 
     void OnLoadNewGame()

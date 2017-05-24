@@ -147,8 +147,8 @@ public class GameSocketHandler : MonoBehaviour {
     public void SendReqGameOver()
     {
         Dictionary<string, string> sendingNewPlayerData = new Dictionary<string, string>();
-        sendingNewPlayerData["isMissionComplete"] = GameOverModel.isMissionComplete.ToString();
-        sendingNewPlayerData["description"] = GameOverModel.description;
+        sendingNewPlayerData["isMissionComplete"] = GameOverModel.IsMainMissionComplete.ToString();
+        sendingNewPlayerData["description"] = GameOverModel.MainMissionDescription;
 
         socket.Emit("game_over", new JSONObject(sendingNewPlayerData));
     }
@@ -164,8 +164,8 @@ public class GameSocketHandler : MonoBehaviour {
     {
         Debug.Log("test" + evt.data);
 
-        GameOverModel.isMissionComplete = bool.Parse(evt.data.GetField("isMissionComplete").str);
-        GameOverModel.description = evt.data.GetField("description").ToString();
+        GameOverModel.IsMainMissionComplete = bool.Parse(evt.data.GetField("isMissionComplete").str);
+        GameOverModel.MainMissionDescription = evt.data.GetField("description").ToString();
         callbackOnGameOver();
 
     }

@@ -5,6 +5,8 @@ using UnityEngine;
 public class GameObjectiveDataModel : MonoBehaviour {
 
 	public static string CurrentGameObjective { get; set; }
+    public static string CurrentSubGameObjetive { get; set; }
+    public static int CurrentPopulationObjective { get; set; }
 
     public static int GameObjectiveTypeUnit
     {
@@ -21,11 +23,20 @@ public class GameObjectiveDataModel : MonoBehaviour {
 
     public static Dictionary<string, string> GameObjeciveDescription = new Dictionary<string, string>()
     {
-        { GameObjectiveModel.FarmMax, "Get maximum 'Farm' level." },
-        { GameObjectiveModel.ForestMax, "Get maximum 'Forest' level." },
-        { GameObjectiveModel.MineMax, "Get maximum 'Mine' level." },
-        { GameObjectiveModel.TownMax, "Get maximum 'Town' level." },
-        { GameObjectiveModel.WoodCutterMax, "Get maximum 'Wood cutter' level."},
+        { GameObjectiveModel.FarmMax, "Get maximum 'Farm' lv." },
+        { GameObjectiveModel.ForestMax, "Get maximum 'Forest' lv." },
+        { GameObjectiveModel.MineMax, "Get maximum 'Mine' lv." },
+        { GameObjectiveModel.TownMax, "Get maximum 'Town' lv." },
+        { GameObjectiveModel.WoodCutterMax, "Get maximum 'Wood cutter' lv."},
+    };
+
+    public static Dictionary<string, string> GameSubObjeciveDescription = new Dictionary<string, string>()
+    {
+        { GameObjectiveModel.FarmMax, "Get 'Farm' lv. 2" },
+        { GameObjectiveModel.ForestMax, "Get 'Forest' lv. 2" },
+        { GameObjectiveModel.MineMax, "Get 'Mine' lv. 2" },
+        { GameObjectiveModel.TownMax, "Get 'Town' lv. 2" },
+        { GameObjectiveModel.WoodCutterMax, "Get Wood cutter' lv. 2"},
     };
 }
 

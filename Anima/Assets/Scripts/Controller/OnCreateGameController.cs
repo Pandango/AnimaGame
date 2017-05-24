@@ -6,9 +6,20 @@ using UnityEngine.UI;
 
 public class OnCreateGameController : MonoBehaviour {
     public GameSocketHandler gameSocketHandler;
+    public bool isGameObjectiveDialogVisible = false;
 
-    [Header("GameObjective setter")]
+    [Header("GameObjective Panel")]
     public Text GameObjectiveTxt;
+    public GameObject ObjectivePanel;
+    public Text MainObjectiveTxt;
+    public Text GameSubObjectiveTxt;
+    public Text PopulationObjectTxt;
+    public GameObject CloseButton;
+
+    [Header("GameObjective Checker")]
+    public GameObject MainObjectiveChecker;
+    public GameObject SubObjectiveChecker;
+    public GameObject PopulationChecker;
 
     [Header("Sharing Resource UI")]
     public Text WoodUnitTxt;
@@ -94,8 +105,67 @@ public class OnCreateGameController : MonoBehaviour {
     {
         string currentGameobjectiveKey = GameObjectiveDataModel.CurrentGameObjective;
         string gameObjectiveDescription = Utilities.GenerateGameObjectiveDescription(currentGameobjectiveKey);
-
         GameObjectiveTxt.text = gameObjectiveDescription;
+        MainObjectiveTxt.text = gameObjectiveDescription;
+
+        string subObjectiveKey = GameObjectiveDataModel.CurrentSubGameObjetive;
+        GameSubObjectiveTxt.text = Utilities.GenerateSubObjectiveDescription(subObjectiveKey);
+
+        int populationObjective = GameObjectiveDataModel.CurrentPopulationObjective;
+        PopulationObjectTxt.text = Utilities.GeneratePopulationObjectiveDescription(populationObjective);
+
+        IntializeGameOverData();
+        DisplayGameObjectiveDialog();
+    }
+
+    void IntializeGameOverData()
+    {
+        GameOverModel.MissionDescription = SituationDescription.Complete;
+
+        GameOverModel.IsMainMissionComplete = false;
+        string currentGameobjectiveKey = GameObjectiveDataModel.CurrentGameObjective;
+        GameOverModel.MainMissionDescription = Utilities.GenerateGameObjectiveDescription(currentGameobjectiveKey);
+
+        GameOverModel.IsSubMissionComplete = false;
+        string subObjectiveKey = GameObjectiveDataModel.CurrentSubGameObjetive;
+        GameOverModel.SubMissionDescription = Utilities.GenerateSubObjectiveDescription(subObjectiveKey);
+
+        GameOverModel.IsPopulationComplete = false;
+        int populationObjective = GameObjectiveDataModel.CurrentPopulationObjective;
+        GameOverModel.PopulationMissionDescription = Utilities.GeneratePopulationObjectiveDescription(populationObjective); 
+    }
+
+    void DisplayGameObjectiveDialog()
+    {
+        ObjectivePanel.SetActive(true);
+        CloseButton.SetActive(false);
+        UpdateObjectiveChecker();
+        StartCoroutine("WaitObjectiveDialogDuration");
+    }
+
+    void UpdateObjectiveChecker()
+    {
+        bool isMainObjectiveComplete = GameOverModel.IsMainMissionComplete;
+        bool isSubObjectiveComplete = GameOverModel.IsSubMissionComplete;
+        bool isPopulationObjectiveComplete = GameOverModel.IsPopulationComplete;
+
+        MainObjectiveChecker.SetActive(isMainObjectiveComplete);
+        SubObjectiveChecker.SetActive(isSubObjectiveComplete);
+        PopulationChecker.SetActive(isPopulationObjectiveComplete);
+    }
+
+    IEnumerator WaitObjectiveDialogDuration()
+    {
+        yield return new WaitForSeconds(10f);
+        ResetObjectiveDialog();
+    }
+
+    void ResetObjectiveDialog()
+    {
+        isGameObjectiveDialogVisible = true;
+        CloseButton.SetActive(true);
+        ObjectivePanel.GetComponent<Image>().color = new Color32(255, 255, 225, 0);
+        ObjectivePanel.SetActive(false);
     }
 
     public void UpdateGameResourceWhenUsedCard()
@@ -181,48 +251,73 @@ public class OnCreateGameController : MonoBehaviour {
         }
         
         Debug.Log("BalancedPercent : " + balancedPercent);
-
     }
 
     public void CheckGameObjective()
     {
-        string gameObjective = GameObjectiveDataModel.CurrentGameObjective;
-        int objectiveLv = 0;
+        CheckMainGameObjective();
+        CheckSubGameObjective();
+        CheckPopulationObjective();
+        UpdateObjectiveChecker();
 
-        if (gameObjective == GameObjectiveModel.FarmMax)
+        bool isGameOver = GameOverModel.IsMainMissionComplete && GameOverModel.IsSubMissionComplete && GameOverModel.IsPopulationComplete;
+        if (isGameOver)
         {
-            objectiveLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.farmExp);
+            GameOverModel.MissionDescription = SituationDescription.Complete;
+            gameSocketHandler.SendReqGameOver();
         }
-        else if (gameObjective == GameObjectiveModel.ForestMax)
-        {
-            objectiveLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.NaturalResources.forestExp);       
-        }
-        else if (gameObjective == GameObjectiveModel.MineMax)
-        {
-            objectiveLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.mineExp);
-        }
-        else if (gameObjective == GameObjectiveModel.TownMax)
-        {
-            objectiveLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.townExp);
-        }
-        else if (gameObjective == GameObjectiveModel.WoodCutterMax)
-        {
-            objectiveLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.woodCutterExp);
-        }
-
-        IsMissionComplete(objectiveLv);
     }
 
-    void IsMissionComplete(int currentLv)
+    public void CheckMainGameObjective()
+    {
+        string gameObjective = GameObjectiveDataModel.CurrentGameObjective;
+        int objectiveLv = GetObjectiveLv(gameObjective);
+
+        IsMainObjectiveMissionComplete(objectiveLv);
+    }
+
+    void IsMainObjectiveMissionComplete(int currentLv)
     {
         int maxLevel = Utilities.MaximumAllowLevel;
         if(currentLv >= maxLevel)
         {
-            string gameObjectiveDescription = GameObjectiveDataModel.CurrentGameObjective;
-            GameOverModel.isMissionComplete = true;
-            GameOverModel.description = Utilities.GenerateGameObjectiveDescription(gameObjectiveDescription);
+            string gameObjective = GameObjectiveDataModel.CurrentGameObjective;
+            GameOverModel.IsMainMissionComplete = true;
+        }
+    }
 
-            gameSocketHandler.SendReqGameOver();
+    public void CheckSubGameObjective()
+    {
+        string subGameObjective = GameObjectiveDataModel.CurrentSubGameObjetive;
+        int subObjectiveLv = GetObjectiveLv(subGameObjective);
+
+        IsSubObjectiveMissionComplete(subObjectiveLv);
+    }
+
+    void IsSubObjectiveMissionComplete(int subObjectiveLv)
+    {
+        int requireLv = Utilities.RequireSubObjectiveLevel;
+
+        if(subObjectiveLv >= requireLv)
+        {
+            string subGameObjective = GameObjectiveDataModel.CurrentSubGameObjetive;
+            GameOverModel.IsSubMissionComplete = true;
+        }
+    }
+
+    public void CheckPopulationObjective()
+    {
+        int currentPopulation = GameResourceDataModel.PopulationFood.population;
+        IsPopulationMissionComplete(currentPopulation);
+    }
+
+    void IsPopulationMissionComplete(int currentPopulation)
+    {
+        int requirePopulation = GameObjectiveDataModel.CurrentPopulationObjective;
+
+        if(currentPopulation >= requirePopulation)
+        {
+            GameOverModel.IsPopulationComplete = true;
         }
     }
 
@@ -232,9 +327,7 @@ public class OnCreateGameController : MonoBehaviour {
 
         if (currentPopulation <= 0)
         {
-            GameOverModel.isMissionComplete = false;
-            GameOverModel.description = SituationDescription.Desolation;
-
+            GameOverModel.MissionDescription = SituationDescription.Famine;
             gameSocketHandler.SendReqGameOver();
         }    
     }
@@ -251,15 +344,12 @@ public class OnCreateGameController : MonoBehaviour {
 
         if (waterLevel <= allowMinimunLv)
         {
-            GameOverModel.isMissionComplete = false;
-            GameOverModel.description = SituationDescription.Desolation;
-
+            GameOverModel.MissionDescription = SituationDescription.Desolation;
             gameSocketHandler.SendReqGameOver();
         }
         else if (waterLevel > allowMinimunLv && waterLevel <= notifyMinumLv)
         {
-            WaterNotify.SetActive(true);
-            
+            WaterNotify.SetActive(true);      
         }
         else if (waterLevel >= notifyMaximunLv && waterLevel < allowMaximumLv)
         {
@@ -267,9 +357,7 @@ public class OnCreateGameController : MonoBehaviour {
         }
         else if (waterLevel >= allowMaximumLv)
         {
-            GameOverModel.isMissionComplete = false;
-            GameOverModel.description = SituationDescription.Flood;
-
+            GameOverModel.MissionDescription = SituationDescription.Flood;
             gameSocketHandler.SendReqGameOver();
         }
         else
@@ -288,5 +376,32 @@ public class OnCreateGameController : MonoBehaviour {
     {
         SceneManager.LoadScene("GameOver", LoadSceneMode.Single);
         yield return new WaitForSeconds(2f);  
+    }
+
+    int GetObjectiveLv(string gameObjective)
+    {
+        int objectiveLv = 0;
+
+        if (gameObjective == GameObjectiveModel.FarmMax)
+        {
+            objectiveLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.farmExp);
+        }
+        else if (gameObjective == GameObjectiveModel.ForestMax)
+        {
+            objectiveLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.NaturalResources.forestExp);
+        }
+        else if (gameObjective == GameObjectiveModel.MineMax)
+        {
+            objectiveLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.mineExp);
+        }
+        else if (gameObjective == GameObjectiveModel.TownMax)
+        {
+            objectiveLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.townExp);
+        }
+        else if (gameObjective == GameObjectiveModel.WoodCutterMax)
+        {
+            objectiveLv = GameFormular.CalculateEXPToLv(GameResourceDataModel.BuildingResouces.woodCutterExp);
+        }
+        return objectiveLv;
     }
 }

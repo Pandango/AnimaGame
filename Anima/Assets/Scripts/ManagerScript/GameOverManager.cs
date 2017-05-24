@@ -8,24 +8,34 @@ public class GameOverManager : MonoBehaviour {
     public Text ObjectiveResultTxt;
     public Text MissionResultTxt;
 
-    public Text DescriptionTxt;
-    public Image ResultSymbol;
-
     public List<Sprite> ResultSymbolSpriteModel;
 
     [Header("BG")]
     public GameObject DesolateBG;
     public GameObject DefaultBG;
 
+    [Header("Sound")]
     public AudioSource bgmSoundMissionConplete;
     public AudioSource bgmMissionFailed;
     public AudioSource bgmMissionComplete;
 
+    [Header("Objective Checker")]
+    public Image MainObjectiveChecker;
+    public Image SubObjectiveChecker;
+    public Image PopObjectiveChecker;
+
+    [Header("Objective Description")]
+    public Text MainObjectiveDescrriptionTxt;
+    public Text SubObjectiveDescriptionTxt;
+    public Text PopulationDescriptionTxt;
+
     void Start()
     {
-        bool isMissionComplete = GameOverModel.isMissionComplete;
+        bool isMissionComplete = GameOverModel.IsMissionComplete;
 
         bgmSoundMissionConplete.Play();
+        UpdateMissionResult();
+
         if (isMissionComplete)
         {
             SetUIAsMissionComplete();
@@ -33,8 +43,7 @@ public class GameOverManager : MonoBehaviour {
         else
         {
             SetUIAsMissionFailed();
-        }
-        
+        }   
     }
 
     void SetUIAsMissionComplete()
@@ -43,12 +52,34 @@ public class GameOverManager : MonoBehaviour {
         DesolateBG.SetActive(false);
 
         bgmMissionComplete.Play();
+      
+        MissionResultTxt.text = "Mission Complete";  
+    }
 
-        DescriptionTxt.text = GameOverModel.description;
-        ResultSymbol.sprite = ResultSymbolSpriteModel[0];
-        ObjectiveResultTxt.text = "Objective Complete.";
-        MissionResultTxt.text = "Mission Complete";
-        
+    void UpdateMissionResult()
+    {
+        ObjectiveResultTxt.text = GameOverModel.MissionDescription;
+
+        MainObjectiveDescrriptionTxt.text = GameOverModel.MainMissionDescription;
+        MainObjectiveChecker.sprite = GetMissionResultSprie(GameOverModel.IsMainMissionComplete);
+
+        SubObjectiveDescriptionTxt.text = GameOverModel.SubMissionDescription;
+        SubObjectiveChecker.sprite = GetMissionResultSprie(GameOverModel.IsSubMissionComplete);
+
+        PopulationDescriptionTxt.text = GameOverModel.PopulationMissionDescription;
+        PopObjectiveChecker.sprite = GetMissionResultSprie(GameOverModel.IsPopulationComplete);
+    }
+
+    Sprite GetMissionResultSprie(bool isComplete)
+    {
+        if (isComplete)
+        {
+            return ResultSymbolSpriteModel[0];
+        }
+        else
+        {
+            return ResultSymbolSpriteModel[1];
+        }
     }
 
     void SetUIAsMissionFailed()
@@ -58,10 +89,6 @@ public class GameOverManager : MonoBehaviour {
 
         bgmMissionFailed.Play();
 
-        DescriptionTxt.text = GameOverModel.description;
-        ResultSymbol.sprite = ResultSymbolSpriteModel[1];
-        ObjectiveResultTxt.text = "Objective Failed.";
-        MissionResultTxt.text = "Mission Failed";
-        
+        MissionResultTxt.text = "Mission Failed"; 
     }
 }

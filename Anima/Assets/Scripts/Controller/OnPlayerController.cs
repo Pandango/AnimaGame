@@ -162,6 +162,11 @@ public class OnPlayerController : MonoBehaviour {
 
     IEnumerator WaitBeforeStartTurn()
     {
+        while (!onCreateGameController.isGameObjectiveDialogVisible)
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+
         RunTimer(false);
 
         TurnNotifyDialog.SetActive(true);
